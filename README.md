@@ -4,7 +4,7 @@
 
 ## 当前版本
 
-`1.0.0`（对外展示为 `1.0`）
+`1.0`
 
 版本规则见 [版本管理规则](docs/VERSIONING.md)，变更记录见 [CHANGELOG.md](CHANGELOG.md)。
 
