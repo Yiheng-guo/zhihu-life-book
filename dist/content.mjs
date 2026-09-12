@@ -176,7 +176,7 @@ export const content = {
   },
   "sourceQuestion": {
     "major_transfer": "如果转专业暂时不可行，我还能通过哪些校内机会继续探索兴趣？",
-    "major_first": "我愿意在入学后的两周，先向谁问清一件具体的事？",
+    "major_first": "下一步开始前，我可以先向谁问清一件具体的事？",
     "college_planning": "下一阶段，我愿意在哪个方向再多投入一点时间？",
     "intern_review": "我能否用一次低成本实践，验证自己是否喜欢这个方向？",
     "graduate_work": "继续备考时，我能保留哪一种成本可控的职业探索？",

@@ -12,9 +12,9 @@ test('source is required, can be replaced, and carries through the next node',()
  assert.equal(s.history[0].choiceLabel,'先去了解别人怎么走过这段路');
 });
 test('all eight endings complete four stages, with no repeated graduation loop',()=>{
- let s=createState();for(const choice of ['ask','practice','intern']){s=step(s,'choose',{choice_id:choice});s=step(s,'select',{source_id:view(s).references[0].id});s=step(s,'advance');}
+ let s=createState();for(const choice of ['ask','course','intern']){s=step(s,'choose',{choice_id:choice});s=step(s,'select',{source_id:view(s).references[0].id});s=step(s,'advance');}
  const endings=view(s).node.choices;assert.equal(endings.length,8);
- for(const {id} of endings){let e=step(s,'choose',{choice_id:id});e=step(e,'select',{source_id:'graduate_three'});e=step(e,'advance');assert.equal(e.phase,'ending');assert.equal(e.history.length,4);assert.ok(view(e).ending.question);assert.throws(()=>step(e,'advance'),{code:'SOURCE_REQUIRED'});}
+ for(const {id} of endings){let e=step(s,'choose',{choice_id:id});e=step(e,'select',{source_id:view(e).references[0].id});e=step(e,'advance');assert.equal(e.phase,'ending');assert.equal(view(e).branch_id,view(s).branch_id);assert.equal(e.history.length,4);assert.ok(view(e).ending.question);assert.throws(()=>step(e,'advance'),{code:'SOURCE_REQUIRED'});}
  assert.notEqual(endings.find(e=>e.id==='delay').label,endings.find(e=>e.id==='jobless').label);
 });
 test('invalid choices, stale operations and back cannot corrupt the path',()=>{
@@ -41,4 +41,71 @@ test('same-origin API keeps sessions isolated, rejects stale updates and complet
  assert.equal((await post('/api/story/event',{session_id:'missing',event:{}})).status,404);
  assert.equal((await fetch(base+'/config.js')).status,200);
  assert.equal((await post('/api/story/event',{session_id:other.data.session_id,event:{type:'choose',revision:0,node_id:'freshman_start',choice_id:'try'}})).status,200);
+});
+const finishPage=(s,choice,source)=>{
+ s=step(s,'choose',{choice_id:choice});
+ s=step(s,'select',{source_id:source||view(s).references[0].id});
+ return step(s,'advance');
+};
+test('the initial action changes the next scene and available actions',()=>{
+ const a=finishPage(createState(),'ask','major_first');
+ const b=finishPage(createState(),'try','major_first');
+ assert.equal(view(a).branch_id,'explore_rules');assert.equal(view(b).branch_id,'explore_trial');
+ assert.ok(view(a).node.choices.some(c=>c.id==='transfer_prepare'));
+ assert.ok(view(b).node.choices.some(c=>c.id==='practice'));
+ assert.throws(()=>step(a,'choose',{choice_id:'practice'}),{code:'INVALID_CHOICE'});
+ assert.throws(()=>step(b,'choose',{choice_id:'transfer_prepare'}),{code:'INVALID_CHOICE'});
+});
+test('changing only the source changes an optional action and its downstream scene',()=>{
+ const a=finishPage(createState(),'ask','major_first');
+ const b=finishPage(createState(),'ask','college_planning');
+ const aChoice=view(a).node.choices.find(c=>c.id==='follow_source');
+ const bChoice=view(b).node.choices.find(c=>c.id==='follow_source');
+ assert.notEqual(aChoice.label,bChoice.label);assert.notEqual(aChoice.focus,bChoice.focus);
+ const nextA=finishPage(a,'follow_source');const nextB=finishPage(b,'follow_source');
+ assert.equal(view(nextA).branch_id,'junior_academic');assert.equal(view(nextB).branch_id,'junior_sustainable');
+ assert.equal(nextA.history[1].inspiredBy,'major_first');assert.equal(nextB.history[1].inspiredBy,'college_planning');
+});
+test('three routes retain different contexts and references while all endings remain available',()=>{
+ const academic=finishPage(finishPage(createState(),'ask'),'course');
+ const portfolio=finishPage(finishPage(createState(),'try'),'practice');
+ const sustainable=finishPage(finishPage(createState(),'try'),'rethink');
+ assert.equal(view(academic).branch_id,'junior_academic');
+ assert.equal(view(portfolio).branch_id,'junior_portfolio');
+ assert.equal(view(sustainable).branch_id,'junior_sustainable');
+ const refsA=view(step(academic,'choose',{choice_id:'prepare'})).references.map(r=>r.id);
+ const refsB=view(step(portfolio,'choose',{choice_id:'portfolio_intern'})).references.map(r=>r.id);
+ assert.notDeepEqual(refsA,refsB);
+ for(const s of [academic,portfolio,sustainable]){
+  const graduation=finishPage(s,view(s).node.choices[0].id);
+  assert.equal(view(graduation).node.choices.length,8);
+  assert.equal(view(graduation).node.choices.filter(c=>c.primary).length,3);
+ }
+});
+test('every reachable choice-source route finishes with four accurate records and a concrete action',()=>{
+ let completed=0;const walk=(s)=>{
+  const v=view(s);
+  if(v.phase==='ending'){
+   completed++;assert.equal(v.history.length,4);assert.ok(v.ending.action);assert.equal(s.sourceId,s.history.at(-1).sourceId);
+   assert.deepEqual(v.history.map(h=>h.nodeId),['freshman_start','explore','junior','graduation']);return;
+  }
+  for(const c of v.node.choices){
+   assert.ok(c.gain&&c.cost);const selected=step(s,'choose',{choice_id:c.id});
+   for(const source of view(selected).references){
+    const after=step(step(selected,'select',{source_id:source.id}),'advance');
+    assert.equal(after.history.at(-1).choiceLabel,c.label);assert.equal(after.history.at(-1).sourceId,source.id);walk(after);
+   }
+  }
+ };
+ walk(createState());assert.equal(completed,11664);
+});
+test('researching job routines does not invent a portfolio, and preview matches the next page',()=>{
+ let s=finishPage(createState(),'try','intern_review');
+ s=finishPage(s,'follow_source');
+ assert.equal(view(s).branch_id,'junior_workday');
+ assert.ok(!view(s).node.choices.some(c=>c.id==='portfolio_intern'));
+ s=step(s,'choose',{choice_id:'intern'});s=step(s,'select',{source_id:view(s).references[0].id});
+ const preview=view(s).source_preview;
+ assert.equal(preview.label,'带到毕业页的问题');
+ s=step(s,'advance');assert.equal(view(s).carry.question,preview.text);
 });
