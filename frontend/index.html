@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="人生之书·大学篇：用知乎真实经历，陪你把沉重的自我评价变成下一步可以尝试的问题。" />
+  <title>人生之书 · 大学篇</title>
+  <style>
+    :root{--ink:#29251f;--muted:#756b5f;--paper:#f7f0e3;--paper2:#fffaf0;--line:#d9cbb8;--accent:#a85e43;--accent2:#324d4b;--shadow:0 24px 80px rgba(52,39,26,.16)}
+    *{box-sizing:border-box} body{margin:0;color:var(--ink);background:radial-gradient(circle at 12% 10%,#fff8e8,transparent 34%),linear-gradient(135deg,#e9ddcc,#f7f0e3 45%,#e4d7c6);font-family:Georgia,"Songti SC","STSong",serif;min-height:100vh}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.22;background-image:radial-gradient(#8f765c 0.6px,transparent .6px);background-size:9px 9px;mix-blend-mode:multiply}
+    .wrap{width:min(1120px,92vw);margin:0 auto;padding:32px 0 56px}.top{display:flex;justify-content:space-between;align-items:center;color:var(--muted);font-size:13px;letter-spacing:.12em}.mark{font-size:14px;color:var(--accent2);font-weight:bold}.stage{margin:24px auto 0;max-width:920px;background:var(--paper);border:1px solid var(--line);box-shadow:var(--shadow);min-height:680px;position:relative;overflow:hidden}.stage:after{content:"";position:absolute;inset:14px;border:1px solid rgba(168,94,67,.22);pointer-events:none}.screen{position:relative;z-index:1;padding:clamp(28px,6vw,72px);min-height:680px;display:flex;flex-direction:column;justify-content:center}.eyebrow{color:var(--accent);font-size:13px;letter-spacing:.22em;text-transform:uppercase;margin-bottom:24px}.kicker{color:var(--muted);font-size:15px;line-height:1.9;max-width:590px}.title{font-size:clamp(42px,8vw,86px);line-height:1.02;margin:0 0 24px;font-weight:normal;letter-spacing:-.04em}.lead{font-size:clamp(20px,2.6vw,28px);line-height:1.65;max-width:760px;margin:0 0 34px}.quote{font-size:clamp(24px,3.5vw,42px);line-height:1.55;max-width:780px;margin:10px 0 36px}.small{font-family:ui-sans-serif,system-ui,sans-serif;color:var(--muted);font-size:13px;line-height:1.7}.btn{border:1px solid var(--ink);background:var(--ink);color:#fffaf0;padding:14px 22px;font:inherit;font-size:16px;cursor:pointer;transition:.2s;box-shadow:5px 5px 0 rgba(168,94,67,.35)}.btn:hover{transform:translateY(-2px);box-shadow:7px 7px 0 rgba(168,94,67,.35)}.btn.secondary{background:transparent;color:var(--ink);box-shadow:none}.actions{display:flex;gap:14px;flex-wrap:wrap}.chapter{display:flex;align-items:center;gap:12px;color:var(--accent2);font-family:ui-sans-serif,system-ui,sans-serif;font-size:12px;letter-spacing:.14em}.chapter span{width:34px;height:1px;background:var(--accent2)}.choices{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:28px 0 8px}.choice{background:var(--paper2);border:1px solid var(--line);padding:22px;text-align:left;cursor:pointer;min-height:132px;transition:.2s;color:var(--ink);font:inherit}.choice:hover{border-color:var(--accent);transform:translateY(-3px);box-shadow:0 10px 30px rgba(52,39,26,.1)}.choice strong{display:block;font-size:20px;font-weight:normal;margin-bottom:9px}.choice em{font-style:normal;color:var(--muted);font-size:14px;line-height:1.6}.feedback{display:grid;grid-template-columns:1.1fr .9fr;gap:22px;margin-top:22px}.panel{background:rgba(255,250,240,.62);border:1px solid var(--line);padding:24px}.panel h3{font-size:18px;font-weight:normal;margin:0 0 13px}.panel p{line-height:1.85;margin:0;font-size:17px}.source{border-left:3px solid var(--accent);padding-left:16px;margin-top:15px}.source a{color:var(--accent2);font-weight:bold;text-decoration:none;line-height:1.5}.source p{font-size:14px;color:var(--muted);line-height:1.7;margin-top:8px}.footer{display:flex;justify-content:space-between;gap:16px;margin-top:24px;align-items:center}.progress{font-family:ui-sans-serif,system-ui,sans-serif;color:var(--muted);font-size:12px}.error{color:#8f332b;background:#fff0eb;border:1px solid #e2afa3;padding:12px 15px;margin-top:18px;font-family:ui-sans-serif,system-ui,sans-serif;font-size:13px}.hide{display:none!important}@media(max-width:700px){.wrap{padding-top:20px}.stage,.screen{min-height:720px}.screen{padding:34px 25px}.choices,.feedback{grid-template-columns:1fr}.title{font-size:52px}.lead{font-size:20px}.quote{font-size:27px}.top{font-size:11px}.footer{align-items:flex-start;flex-direction:column}}
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <header class="top"><span class="mark">人生之书</span><span>大学篇 · 第一章</span><span>01 / 03</span></header>
+    <section class="stage" aria-live="polite">
+      <div id="start" class="screen">
+        <div class="chapter"><span></span>序章 · 一句遗憾</div>
+        <h1 class="title">人生之书</h1>
+        <p class="quote">“未能珍惜年少考入好大学，以致此生碌碌无为。”</p>
+        <p class="kicker">这句话从一个知乎投票里浮上来。它说的是大学，也像是在问每一个回头看过自己的人：如果当时做了另一个选择，今天会不会不一样？</p>
+        <div class="actions" style="margin-top:30px"><button class="btn" id="startBtn">翻开大学篇</button><button class="btn secondary" id="aboutBtn">这本书在做什么</button></div>
+        <p id="about" class="small hide" style="max-width:620px;margin-top:22px">我们把知乎上真实的问题、回答和经历，整理成可以进入、可以选择、可以继续追问的章节。大学篇只是第一章。</p>
+      </div>
+      <div id="story" class="screen hide">
+        <div class="chapter"><span></span><span id="nodeLabel">第一章 · 大学入场</span></div>
+        <h2 id="storyTitle" class="title" style="font-size:clamp(34px,5vw,58px)"></h2>
+        <p id="storyNarration" class="lead"></p>
+        <p class="small">你会怎么做？这里没有标准答案，只有不同的下一页。</p>
+        <div id="choices" class="choices"></div><div id="storyError" class="error hide"></div>
+        <div class="footer"><span class="progress">选择会改变你看到的下一段故事</span><button class="btn secondary" id="restartBtn">重新开始</button></div>
+      </div>
+      <div id="result" class="screen hide">
+        <div class="chapter"><span></span>这一页的回声</div>
+        <h2 id="resultTitle" class="title" style="font-size:clamp(34px,5vw,58px)"></h2>
+        <div class="feedback"><article class="panel"><h3>你的下一页</h3><p id="resultNarration"></p></article><aside class="panel"><h3>知乎上的一个人</h3><div id="source" class="source"></div></aside></div>
+        <div class="footer"><span class="progress">真实经历不是答案，是你继续提问的入口</span><button class="btn" id="nextBtn">继续下一页</button></div>
+      </div>
+    </section>
+  </main>
+  <script>
+    const API_BASE = window.__STORY_API_BASE__ || '';
+    const state={sessionId:null,nodeId:null};
+    const $=id=>document.getElementById(id);
+    function show(id){['start','story','result'].forEach(x=>$(x).classList.toggle('hide',x!==id));}
+    function fallbackStart(){return {session_id:'demo-local',node_id:'freshman_start',title:'大学的第一页',narration:'你拿到录取通知书的那天，所有人都在说这是一个新的开始。可真正的大学生活，要从你如何使用这些时间开始。',choices:[{id:'ask',label:'先去了解别人怎么走过这段路',hint:'把困惑变成一个可以请教的问题'},{id:'try',label:'先选一件小事，今天就开始试试',hint:'不用等想明白一生，先写下下一步'}]};}
+    function fallbackChoose(id){return id==='ask'?{next_node_id:'chapter_01_ask',title:'从别人的故事开始',narration:'你没有急着给自己下结论。你打开知乎，先去看那些走过相似路的人：有人重新规划，有人承认绕过弯路，也有人只是终于找到一个可以继续问下去的问题。',references:[{title:'关于大学迷茫与选择的真实回答',summary:'以下为基于知乎公开内容的体验摘要，现场版本会替换为经核验的具体回答来源。',url:'https://www.zhihu.com/search?q=%E5%A4%A7%E5%AD%A6%20%E8%BF%B7%E8%8C%AB%20%E9%80%89%E6%8B%A9'}]}:{next_node_id:'chapter_01_try',title:'先做一件小事',narration:'你没有把“以后会不会后悔”想完才行动。你给自己定下一件今天能完成的小事，结果不保证改变人生，但它让下一步变得看得见。',references:[{title:'关于大学行动与长期选择的真实回答',summary:'以下为基于知乎公开内容的体验摘要，现场版本会替换为经核验的具体回答来源。',url:'https://www.zhihu.com/search?q=%E5%A4%A7%E5%AD%A6%20%E8%A1%8C%E5%8A%A8%20%E9%80%89%E6%8B%A9'}]};}
+    async function call(path,body){const r=await fetch(API_BASE+path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)});if(!r.ok)throw new Error('服务暂时不可用');return r.json();}
+    function renderStory(data){state.sessionId=data.session_id;state.nodeId=data.node_id;$('storyTitle').textContent=data.title;$('storyNarration').textContent=data.narration;$('choices').innerHTML=data.choices.map(c=>`<button class="choice" data-id="${c.id}"><strong>${c.label}</strong><em>${c.hint||''}</em></button>`).join('');$('choices').querySelectorAll('.choice').forEach(b=>b.onclick=()=>choose(b.dataset.id));}
+    async function start(){show('story');try{renderStory(API_BASE?await call('/api/story/start',{}):fallbackStart())}catch(e){renderStory(fallbackStart());$('storyError').textContent='当前使用离线体验，连接恢复后会显示实时知乎来源。';$('storyError').classList.remove('hide');}}
+    async function choose(id){$('choices').querySelectorAll('button').forEach(b=>b.disabled=true);try{const d=API_BASE?await call('/api/story/choose',{session_id:state.sessionId,node_id:state.nodeId,choice_id:id}):fallbackChoose(id);state.nodeId=d.next_node_id;$('resultTitle').textContent=d.title;$('resultNarration').textContent=d.narration;const s=d.references?.[0];$('source').innerHTML=s?`<a href="${s.url}" target="_blank" rel="noreferrer">${s.title}</a><p>${s.summary}</p>`:'<p>暂无来源，稍后再试。</p>';show('result')}catch(e){$('storyError').textContent='这一次连接没有完成。请稍后重试，故事不会丢失。';$('storyError').classList.remove('hide');$('choices').querySelectorAll('button').forEach(b=>b.disabled=false)}}
+    $('startBtn').onclick=start;$('aboutBtn').onclick=()=>{$('about').classList.toggle('hide')};$('restartBtn').onclick=()=>{state.sessionId=null;show('start')};$('nextBtn').onclick=()=>{renderStory({session_id:state.sessionId,node_id:'sophomore_next',title:'大学篇 · 下一页',narration:'你还没有得到结论，但你已经拥有了一个更具体的问题。下一章，会从这里继续。',choices:[{id:'ask',label:'继续了解别人的经历',hint:'让问题连接到更多真实的人'},{id:'try',label:'把想法变成一次尝试',hint:'给自己一页可以写下行动的空白'}]});show('story')};
+  </script>
+</body>
+</html>
