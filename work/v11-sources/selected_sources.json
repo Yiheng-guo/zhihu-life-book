@@ -1,0 +1,216 @@
+{
+  "generated_at_utc": "2026-09-12T04:23:14.493733+00:00",
+  "scope": "最多 3 次知乎搜索，每次 count=3；未调用直答、其他模型或本人数据。",
+  "source_notice": "所有条目仅依据本次搜索返回内容；个人经历为自述，未经独立核验。AuthorName 与 AuthorSignature 分开保留。",
+  "selected_sources": [
+    {
+      "id": "enrollment_transfer_chenxing",
+      "title": "大一开学必须要知道的事情是什么? - 知乎",
+      "url": "https://www.zhihu.com/question/645162368/answer/2074938532783830402?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+      "AuthorName": "宸星",
+      "AuthorSignature": "47-4-95-46-54",
+      "type": "Answer",
+      "ContentID": "5357103287123621764",
+      "accessed_at_utc": "2026-09-12T04:20:35.105573+00:00",
+      "retrieval_query": "大一 转专业 我的经历",
+      "content_classification": "个人经历自述（未独立核验）",
+      "original_excerpt": "转专业，很多学校看的就是大一成绩，有的干脆只看大一上学期。 这个我最有发言权，因为我自己就是这么转的。\n大一期末，我绩点排到全年级前 1%。大二开学拿着成绩单去申请转专业，一次过，基本没费劲。\n你听着觉得”转专业好难啊，得前 1%“——不是。难的不是前 1%，是大部分人大一压根没把成绩当回事。等大二想转的时候，绩点已经趴在及格线边上，连报名门槛都摸不着。到那会儿你才发现，不是规则不让你转，是你自己大一那一年，亲手把门焊死了。\n保研同理，看的是前三年加权，不是最后一年。你大三下学期才醒过来开始卷，前两年的账已经补不回来了。\n这些词，别等辅导员开班会才第一次听见。\n接下来说绩点。\n我知道有人要拿”能力比分数重要”来反驳。对，能力重要，但能力是要有凭证的，而绩点是你最便宜、最好拿的那个凭证。",
+      "excerpt_char_count": 347,
+      "excerpt_note": "逐字摘自知乎开放平台搜索返回 ContentText；该片段不等于完整原文。",
+      "summary_non_verbatim": "作者自述大一期末绩点排名前 1%，在大二开学时申请转专业并获通过；同时建议新生了解培养方案、转专业细则和推免办法。学校和政策年份未在返回片段中明确。",
+      "applicable_stages": [
+        "入学",
+        "探索"
+      ],
+      "evidence_boundaries": [
+        "个人转专业结果未经独立核验；不能据此承诺高绩点必然转专业成功。",
+        "文中包含观察性判断和不同学校政策，不能引用为统计事实或普遍规则。",
+        "只能据本校当年官方规定确认条件，不能向所有用户套用前 1% 门槛。"
+      ],
+      "source_platform_fields": {
+        "VoteUpCount": 47,
+        "CommentCount": 4,
+        "EditTime": 1787483896,
+        "AuthorityLevel": "4"
+      },
+      "raw_source_file": "work/v11-sources/enrollment-raw.json",
+      "editorial_options": [
+        {
+          "label": "先弄清可选择的范围",
+          "action": "找到本校当年的培养方案和转专业通知，记下申请条件与时间。",
+          "carry_question": "如果这一轮暂不符合条件，还有什么学习机会可以保留？"
+        },
+        {
+          "label": "给兴趣安排一次实际体验",
+          "action": "选择目标专业的一项公开课程练习，记录自己想继续了解的部分。",
+          "carry_question": "我想改变的是课程内容、未来工作方向，还是对当前环境的不适应？"
+        }
+      ],
+      "editorial_options_note": "互动动作和承接问题由产品编辑拟定，不是原作者原话，不归因原作者。"
+    },
+    {
+      "id": "exploration_internship_tianhuiliang",
+      "title": "大三下实习求职全程复盘:从迷茫定岗到拿到offer,我的真实思考与踩坑 - 知乎",
+      "url": "https://zhuanlan.zhihu.com/p/2052730825624523701?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+      "AuthorName": "天会亮",
+      "AuthorSignature": "ivoz-by",
+      "type": "Article",
+      "ContentID": "-3293977134321022863",
+      "accessed_at_utc": "2026-09-12T04:20:07.341965+00:00",
+      "retrieval_query": "大学 迷茫 实习 试错 我的经历",
+      "content_classification": "个人经历自述（未独立核验）",
+      "original_excerpt": "个人情况\n湖北某双非一本，电气工程及其自动化专业，电力电子方向，正处在大三下学期。和大多数同专业的同学差不多，之前两年多基本都在啃书本、做课程实验，对职场上的具体岗位、行业发展到底是什么样，其实没什么清晰的概念。这次找暑期实习，算是我第一次认真地给自己做职业规划，对接职场。\n一、我如何初步确当职业兴趣方向\n我先把电气专业常见的几个出路列出来，挨个划掉底线：售后工程师、运维工程师，工作核心是跟设备、机器打交道，长期对着机器调试运维，人际协作和沟通的部分很少。我自己坐不住，也不喜欢这种单一的工作模式，直接排除。\n剩下的研发、销售、技术支持这几个方向，我没只看官方写的岗位介绍——那些描述都太笼统了。",
+      "excerpt_char_count": 300,
+      "excerpt_note": "逐字摘自知乎开放平台搜索返回 ContentText；该片段不等于完整原文。",
+      "summary_non_verbatim": "作者自述为双非一本电气专业大三学生，首次认真寻找暑期实习时，先比较岗位日常，再回看自己组织活动时的投入感，将兴趣逐渐指向技术与沟通协作结合的工作。标题提到拿到 offer，但本次摘录没有完整覆盖录用过程。",
+      "applicable_stages": [
+        "探索",
+        "大三准备"
+      ],
+      "evidence_boundaries": [
+        "作者自述未经独立核验，学校背景与职业偏好不代表其他学生。",
+        "岗位日常是作者理解，不作为完整职业定义。",
+        "当前返回内容未覆盖完整求职结局，不扩写薪资、公司或录用机制。"
+      ],
+      "source_platform_fields": {
+        "VoteUpCount": 1,
+        "CommentCount": 0,
+        "EditTime": 1782189462,
+        "AuthorityLevel": "3"
+      },
+      "raw_source_file": "work/v11-sources/exploration-raw.json",
+      "editorial_options": [
+        {
+          "label": "先看工作每天在做什么",
+          "action": "挑两个岗位，各读一条从业者日常记录，写下想进一步核实的问题。",
+          "carry_question": "哪些具体工作让我想尝试，而不只是觉得岗位名字有吸引力？"
+        },
+        {
+          "label": "从做过的事里找线索",
+          "action": "回想最近一次投入完成的活动或项目，记录自己最愿意承担的任务。",
+          "carry_question": "下一次实践能否验证我喜欢的这类任务？"
+        }
+      ],
+      "editorial_options_note": "互动动作和承接问题由产品编辑拟定，不是原作者原话，不归因原作者。"
+    },
+    {
+      "id": "graduation_exam_work_kaola",
+      "title": "在考研三战失败后,我找到了属于自己的路 - 知乎",
+      "url": "https://zhuanlan.zhihu.com/p/2072768739104371400?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+      "AuthorName": "考拉",
+      "AuthorSignature": "mpc-42",
+      "type": "Article",
+      "ContentID": "6232304921689247927",
+      "accessed_at_utc": "2026-09-12T04:20:07.984576+00:00",
+      "retrieval_query": "毕业 未就业 考研 我的经历",
+      "content_classification": "个人经历自述（未独立核验）",
+      "original_excerpt": "很多人都说，找到一件既正确又喜欢的事，坚持做下去就好了。可到底什么才是正确又喜欢的事，我一直搞不懂。\n如果你也正处在迷茫里，看不清前路，那希望我这一路跌跌撞撞的经历，能给你一点启发。到现在我也不敢说，我已经找对了人生的路，但至少，我不讨厌脚下这条路。这条路，是我考研三战失败，身边人纷纷疏远之后，硬生生自己摸索出来的。\n23、24两年考研，把我所有自信、所有幻想全部打碎。脱产备考两年，我和社会脱节，毕业之后找工作处处碰壁。24年初，我在家躺了八个月，什么都不想干，什么都不愿去想。就在这个低谷，表姐给我介绍了一份外包工作，也就是从24年8月，一直走到现在。\n刚入职那会儿，我整个人是懵的。外包岗位，还是财务相关，和我计算机专业完全不搭边。一边担心自己干不来，一边又焦虑未来。大家都说做过外包，以后跳槽很难。",
+      "excerpt_char_count": 354,
+      "excerpt_note": "逐字摘自知乎开放平台搜索返回 ContentText；该片段不等于完整原文。",
+      "summary_non_verbatim": "作者自述多次考研失利、脱产备考后求职受阻，2024 年通过亲属介绍进入与计算机专业不同的财务相关外包岗位，逐渐掌握工作流程后又开始担心成长和竞争力。返回片段尚未交代文章最终如何回应这些困惑。",
+      "applicable_stages": [
+        "大三准备",
+        "毕业"
+      ],
+      "evidence_boundaries": [
+        "多次考试与工作历程均为作者自述，未经独立核验。",
+        "标题称找到自己的路，但片段没有完整呈现后续；不得补写转正、升职或逆袭。",
+        "就业通过亲属介绍，不能将路径写成人人可复制的求职方案。",
+        "这是毕业后的生活阶段，不是大一到大四完整路径。"
+      ],
+      "source_platform_fields": {
+        "VoteUpCount": 4,
+        "CommentCount": 0,
+        "EditTime": 1788481346,
+        "AuthorityLevel": "3"
+      },
+      "raw_source_file": "work/v11-sources/graduation-raw.json",
+      "editorial_options": [
+        {
+          "label": "先找一个现实可做的入口",
+          "action": "列出现阶段可接触的一种工作或实践机会，确认进入条件与时间成本。",
+          "carry_question": "我当前最需要解决的是收入、经验、健康作息，还是方向感？"
+        },
+        {
+          "label": "为下一步留一个成长目标",
+          "action": "从当前学习或工作中选一项能逐步练习的技能，写下下一次练习安排。",
+          "carry_question": "什么具体进展会让我感到这段时间有所积累？"
+        }
+      ],
+      "editorial_options_note": "互动动作和承接问题由产品编辑拟定，不是原作者原话，不归因原作者。"
+    },
+    {
+      "id": "graduation_uncertain_mangocaomei",
+      "title": "考研失败又没找到工作的人就真的完了么? - 知乎",
+      "url": "https://www.zhihu.com/question/380319922/answer/1086752079?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+      "AuthorName": "芒果草莓",
+      "AuthorSignature": "ban-xia-77-27",
+      "type": "Answer",
+      "ContentID": "7875706960996623296",
+      "accessed_at_utc": "2026-09-12T04:20:07.984576+00:00",
+      "retrieval_query": "毕业 未就业 考研 我的经历",
+      "content_classification": "个人经历自述（未独立核验）",
+      "original_excerpt": "我现在没正式工作，考研也失败了。分享一下我的经历吧。\n考了一次国考，两次省考，考了三次事业单位，一次教师，两次研，都是差很多。中间浪费了两年时间，700多天。\n我想我经历了这么多，应该有资格回答这样的问题。\n18年毕业，那时候没有想过考研，所以18年我浪费了。匆匆毕业，上赶着找工作，其实找什么工作自己也不是很清楚，只是沿袭着学长学姐们的道路，找一个自己专业的工作吧。那时候这么想的。\n出来社会以后才发现普通本科的学历在社会难以立足。\n18年下半年开始准备考研，那时候考研的心态也不是很坚定，就想着自己能有条出路，为自己学历镀金。\n但还是准备着找工作，一边找一边准备。我家里没有什么钱，家里不同意我考研，因为再供着我脱产考研是不可能的。\n有公立学校找代课老师，我去了。",
+      "excerpt_char_count": 334,
+      "excerpt_note": "逐字摘自知乎开放平台搜索返回 ContentText；该片段不等于完整原文。",
+      "summary_non_verbatim": "作者自述 2018 年毕业后求职方向不清，在家庭无法继续支持脱产备考的条件下做代课老师并准备考研；在多次考试失利后，发文时仍无正式工作。这是一篇保留未解决处境的经历，不能改写成后续成功故事。",
+      "applicable_stages": [
+        "大三准备",
+        "毕业"
+      ],
+      "evidence_boundaries": [
+        "发文时状态不等于作者现在状态；平台 EditTime 为 2020 年，不能称为当前就业趋势。",
+        "分数、薪资和考试情况只属于其情境，不能推广为制度或市场结论。",
+        "片段中的自我评价不是客观人格评价。",
+        "不依据经历预测用户结果，不扩写最后上岸或就业结局。"
+      ],
+      "source_platform_fields": {
+        "VoteUpCount": 498,
+        "CommentCount": 162,
+        "EditTime": 1599720529,
+        "AuthorityLevel": "4"
+      },
+      "raw_source_file": "work/v11-sources/graduation-raw.json",
+      "editorial_options": [
+        {
+          "label": "把准备与生活成本一起算清",
+          "action": "写下未来一个月的必要支出和可投入时间，再确定能持续的学习或求职安排。",
+          "carry_question": "哪个计划既符合目标，也能照顾我眼下的资源与状态？"
+        },
+        {
+          "label": "允许方向暂时没有定论",
+          "action": "选一个最想了解的问题，寻找一位经历相近的人，先准备一条具体的请教问题。",
+          "carry_question": "我还缺少哪条信息，才更有把握决定下一步？"
+        }
+      ],
+      "editorial_options_note": "互动动作和承接问题由产品编辑拟定，不是原作者原话，不归因原作者。"
+    }
+  ],
+  "excluded_sources": [
+    {
+      "query_group": "exploration",
+      "index": 0,
+      "reason": "第三人称整理的五个案例，不是个人自述。"
+    },
+    {
+      "query_group": "exploration",
+      "index": 2,
+      "reason": "研究生实习秋招经历，阶段适配度低于已选本科经历。"
+    },
+    {
+      "query_group": "graduation",
+      "index": 2,
+      "reason": "机构求职引流，混合第一人称与学姐案例。"
+    },
+    {
+      "query_group": "enrollment",
+      "index": 0,
+      "reason": "转专业机构宣传。"
+    },
+    {
+      "query_group": "enrollment",
+      "index": 2,
+      "reason": "机构宣传使用第一人称，署名为机构老师。"
+    }
+  ]
+}

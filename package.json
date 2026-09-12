@@ -1,0 +1,1 @@
+{"name":"zhihu-life-book","private":true,"type":"module","engines":{"node":">=22"},"scripts":{"dev":"node backend/server.mjs","build":"node scripts/build.mjs","test":"node --test tests/*.test.mjs"}}

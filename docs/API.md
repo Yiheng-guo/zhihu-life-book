@@ -1,35 +1,21 @@
-# 最小接口约定（第一版）
+# 故事接口约定（1.1）
 
-后端服务统一以 `/api` 开头。前端只调用后端，不在浏览器中保存知乎或模型密钥。
+前端与后端共享 `frontend/story.mjs` 状态机。公网静态版直接运行同一状态机；本地 API 版由 `backend/server.mjs` 提供同源接口。知乎或模型密钥不进入浏览器。
 
 ## 启动故事
 
-`POST /api/story/start`
+`POST /api/story/start` → `{session_id, view}`。`view` 包含 `revision`、当前节点、选择、来源和阶段。
 
-响应至少包含：`session_id`、`node_id`、`title`、`narration`、`choices`。
+## 提交事件
 
-## 提交选择
-
-`POST /api/story/choose`
-
-请求：
+`POST /api/story/event`
 
 ```json
-{"session_id":"demo-001","node_id":"freshman_start","choice_id":"plan"}
+{"session_id":"demo-001","event":{"type":"choose","revision":0,"node_id":"freshman_start","choice_id":"ask"}}
 ```
 
-响应至少包含：
-
-```json
-{
-  "session_id":"demo-001",
-  "node_id":"freshman_plan",
-  "narration":"下一段剧情文本",
-  "choices":[{"id":"continue","label":"继续"}],
-  "references":[{"title":"知乎真实经历标题","summary":"摘要","url":"https://www.zhihu.com/..."}]
-}
-```
+事件类型：`choose`（做剧情选择）、`select`（选来源）、`advance`（带来源进入下一页）、`back`（返回重选剧情）。每次事件必须携带服务端返回的 `revision`；过期事件返回 `409 STALE_STATE`。没有选来源时 `advance` 返回 `SOURCE_REQUIRED`。
 
 ## 健康检查
 
-`GET /healthz` 返回服务是否可用。错误响应统一包含 `code` 和 `message`。
+`GET /healthz` 返回 `{ok, version, mode, runtime_ai}`。未知路径和无效请求统一返回 JSON `{code, message}`。本地会话只保存在内存并自动过期，公网静态体验不上传个人输入。

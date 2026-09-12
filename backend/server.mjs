@@ -1,8 +1,42 @@
 import http from 'node:http';
-const port=process.env.PORT||8787;
-const sources=[{title:'大学学的不是喜欢的专业怎么办?',author:'知你you',content_type:'知乎回答',summary:'作者整理转专业流程，并用身边案例说明：被调剂或不喜欢当前专业时，应关注学校官方通知与要求，保持绩点并准备面试。',url:'https://www.zhihu.com/question/30728453/answer/2070850819293984726?utm_medium=openapi_platform&utm_source=cf621feb3f2d'},{title:'毕业一年闯荡社会的真实血泪史',author:'levares',content_type:'知乎文章',summary:'作者自述考研落榜、错过实习以及毕业后进入与预期不符的高强度岗位；这是个人经历，不代表普遍结局。',url:'https://zhuanlan.zhihu.com/p/719380437?utm_medium=openapi_platform&utm_source=cf621feb3f2d'},{title:'只顾埋头学习,这件事不想清楚,大四毕业真的会后悔',author:'作者署名待核验',content_type:'知乎文章',summary:'文章建议把大学四年分阶段探索、聚焦方向并尝试实习，再权衡就业或深造；这是文章建议，不是统计结论。',url:'https://zhuanlan.zhihu.com/p/2077121110202642883?utm_medium=openapi_platform&utm_source=cf621feb3f2d'}];
-const headers={'content-type':'application/json; charset=utf-8','access-control-allow-origin':'*','access-control-allow-headers':'content-type'};
-const send=(res,status,data)=>{res.writeHead(status,headers);res.end(JSON.stringify(data));};
-const start=()=>({session_id:'demo-'+Date.now(),node_id:'freshman_start',title:'大学的第一页',narration:'你拿到录取通知书的那天，所有人都在说这是一个新的开始。可真正的大学生活，要从你如何使用这些时间开始。',choices:[{id:'ask',label:'先去了解别人怎么走过这段路',hint:'把困惑变成一个可以请教的问题'},{id:'try',label:'先选一件小事，今天就开始试试',hint:'不用等想明白一生，先写下下一步'}]});
-const choose=(body)=>({session_id:body.session_id||'demo',next_node_id:body.choice_id==='ask'?'chapter_01_ask':'chapter_01_try',title:body.choice_id==='ask'?'从别人的故事开始':'先做一件小事',narration:body.choice_id==='ask'?'你没有急着给自己下结论。你打开知乎，先去看那些走过相似路的人：有人重新规划，有人承认绕过弯路，也有人只是终于找到一个可以继续问下去的问题。':'你没有把“以后会不会后悔”想完才行动。你给自己定下一件今天能完成的小事，结果不保证改变人生，但它让下一步变得看得见。',references:sources});
-const server=http.createServer((req,res)=>{if(req.method==='OPTIONS'){res.writeHead(204,headers);return res.end()}if(req.method==='GET'&&req.url==='/healthz')return send(res,200,{ok:true,service:'life-book'});if(req.method==='POST'&&req.url==='/api/story/start')return send(res,200,start());if(req.method==='POST'&&req.url==='/api/story/choose'){let raw='';req.on('data',c=>raw+=c);req.on('end',()=>{try{return send(res,200,choose(JSON.parse(raw||'{}')))}catch{return send(res,400,{code:'INVALID_JSON',message:'无法读取选择'})}});return}send(res,404,{code:'NOT_FOUND',message:'没有这个页面'});});server.listen(port,()=>console.log(`life-book backend listening on ${port}`));
+import {randomUUID} from 'node:crypto';
+import {readFile} from 'node:fs/promises';
+import {fileURLToPath} from 'node:url';
+import {createState,transition,view} from '../frontend/story.mjs';
+const frontend=new URL('../frontend/',import.meta.url);
+const files=new Set(['index.html','styles.css','app.mjs','content.mjs','story.mjs','config.js']);
+const MIME={html:'text/html; charset=utf-8',css:'text/css; charset=utf-8',mjs:'text/javascript; charset=utf-8',js:'text/javascript; charset=utf-8'};
+const json=(res,status,body)=>{res.writeHead(status,{'content-type':'application/json; charset=utf-8','cache-control':'no-store'});res.end(JSON.stringify(body));};
+async function body(req){let raw='';for await(const c of req){raw+=c;if(Buffer.byteLength(raw)>16384)throw Object.assign(new Error('请求过长'),{status:413});}try{return JSON.parse(raw||'{}');}catch{throw Object.assign(new Error('请求不是有效 JSON'),{status:400});}}
+export function createServer(){
+ const sessions=new Map();const ttl=2*60*60*1000;
+ return http.createServer(async(req,res)=>{try{
+ const path=new URL(req.url,'http://localhost').pathname;
+ if(req.method==='GET'&&path==='/healthz')return json(res,200,{ok:true,version:'1.1',mode:'curated',runtime_ai:false});
+ if(req.method==='POST'&&path.startsWith('/api/')){
+  // Local same-origin service; deployment with remote browsers needs an explicit origin/auth policy.
+  if(req.headers.origin&&new URL(req.headers.origin).host!==req.headers.host)return json(res,403,{code:'ORIGIN_DENIED',message:'请求来源不受支持'});
+  const data=await body(req), now=Date.now();for(const [id,s]of sessions)if(now-s.touched>ttl)sessions.delete(id);
+  if(path==='/api/story/start'){
+   if(sessions.size>=1000)return json(res,503,{code:'BUSY',message:'服务繁忙，请稍后再试'});
+   const id=randomUUID(), state=createState();sessions.set(id,{state,touched:now});return json(res,200,{session_id:id,view:view(state)});
+  }
+  if(path==='/api/story/event'){
+   const session=sessions.get(data.session_id);if(!session)return json(res,404,{code:'SESSION_NOT_FOUND',message:'本次阅读已过期，请重新开始'});
+   try{session.state=transition(session.state,data.event);session.touched=now;return json(res,200,{session_id:data.session_id,view:view(session.state)});}
+   catch(e){return json(res,e.code==='STALE_STATE'?409:400,{code:e.code||'INVALID_EVENT',message:e.message});}
+  }
+  return json(res,404,{code:'NOT_FOUND',message:'没有这个接口'});
+ }
+ if(req.method==='GET'){
+  const name=path==='/'?'index.html':path.slice(1);
+  if(!files.has(name))return json(res,404,{code:'NOT_FOUND',message:'没有这个页面'});
+  const data=name==='config.js'?"window.LIFE_BOOK_CONFIG = {mode:'api',apiBase:''};":await readFile(new URL(name,frontend));
+  res.writeHead(200,{'content-type':MIME[name.split('.').at(-1)],'cache-control':'no-cache'});return res.end(data);
+ }
+ json(res,405,{code:'METHOD_NOT_ALLOWED',message:'不支持的请求方式'});
+ }catch(e){json(res,e.status||500,{code:'REQUEST_FAILED',message:e.status?e.message:'服务暂时不可用'});}});
+}
+if(process.argv[1]===fileURLToPath(import.meta.url)){
+ const port=Number(process.env.PORT||4173);createServer().listen(port,'127.0.0.1',()=>console.log(`Local: http://127.0.0.1:${port}`));
+}
