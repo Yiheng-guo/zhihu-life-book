@@ -1,0 +1,74 @@
+{
+  "generated_at_utc": "2026-09-12T00:00:00Z",
+  "access_note": "时间为本次记录生成时的近似 UTC；来源来自知乎开放平台 search zhihu 返回字段。摘要均为归纳，非原话。",
+  "search_calls": [
+    {
+      "query": "大学 迷茫 选择 转专业",
+      "count": 3,
+      "status": "success",
+      "items_returned": 3
+    },
+    {
+      "query": "考研 就业 后悔 经历",
+      "count": 3,
+      "status": "success",
+      "items_returned": 3
+    }
+  ],
+  "selected_sources": [
+    {
+      "title": "大学学的不是喜欢的专业怎么办?",
+      "author": "知你you",
+      "content_type": "Answer",
+      "url": "https://www.zhihu.com/question/30728453/answer/2070850819293984726?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+      "source_fields": {
+        "ContentID": "3265307137748839043",
+        "VoteUpCount": 3,
+        "CommentCount": 1,
+        "AuthorSignature": "you-8-78-16",
+        "AuthorityLevel": "4",
+        "EditTime": 1786865923
+      },
+      "summary_non_verbatim": "作者整理转专业流程，并用身边案例说明：被调剂或不喜欢当前专业时，应关注学校官方通知与要求，保持绩点并准备面试；文中案例结果并未被本摘要之外的材料核验。",
+      "accessed_at_utc": "2026-09-12T00:00:00Z"
+    },
+    {
+      "title": "毕业一年闯荡社会的真实血泪史",
+      "author": "levares",
+      "content_type": "Article",
+      "url": "https://zhuanlan.zhihu.com/p/719380437?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+      "source_fields": {
+        "ContentID": "942835958581544412",
+        "VoteUpCount": 9284,
+        "CommentCount": 1332,
+        "AuthorSignature": "levares",
+        "AuthorityLevel": "4",
+        "EditTime": 1786255563
+      },
+      "summary_non_verbatim": "作者自述：普通本科设计专业，曾在大三下学期备考考研并落榜，因备考错过实习，毕业后进入广州工作，实际岗位与预期不符且加班强度高；这是个人经历，不代表普遍结局。",
+      "accessed_at_utc": "2026-09-12T00:00:00Z"
+    },
+    {
+      "title": "只顾埋头学习,这件事不想清楚,大四毕业真的会后悔",
+      "author": "（搜索返回 AuthorName 为空；页面署名未在本次摘要中确认）",
+      "content_type": "Article",
+      "url": "https://zhuanlan.zhihu.com/p/2077121110202642883?utm_medium=openapi_platform&utm_source=cf621feb3f2d",
+      "source_fields": {
+        "ContentID": "1619761023682591436",
+        "VoteUpCount": 0,
+        "CommentCount": 0,
+        "AuthorSignature": "zhang-qiang-98-71",
+        "AuthorityLevel": "3",
+        "EditTime": 1788004642
+      },
+      "summary_non_verbatim": "文章建议把大学四年分阶段探索：大一了解兴趣与能力，大二聚焦方向，大三兼顾深入学习与实习，大四再在就业或深造间权衡；这是文章建议，不应当作作者个人经历或统计结论。",
+      "accessed_at_utc": "2026-09-12T00:00:00Z"
+    }
+  ],
+  "zhida_call": {
+    "status": "success",
+    "model_returned": "zhida-fast-1p5",
+    "prompt_scope": "仅基于上述三条摘要生成两组选择反馈",
+    "response_preserved_in_findings": true
+  }
+}
