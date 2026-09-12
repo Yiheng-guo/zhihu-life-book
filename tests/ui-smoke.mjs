@@ -1,37 +1,7 @@
-// Run with PLAYWRIGHT_MODULE pointing to an installed Playwright package.
-import {createRequire} from 'node:module';
-import assert from 'node:assert/strict';
-const require=createRequire(import.meta.url);
-const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');
-const browser=await chromium.launch({channel:'chrome',headless:true});
-try{
- for(const mode of ['local','api']){
- const context=await browser.newContext({viewport:{width:1280,height:950},acceptDownloads:true});
- if(mode==='local')await context.route('**/config.js',route=>route.fulfill({contentType:'text/javascript',body:"window.LIFE_BOOK_CONFIG={mode:'local',apiBase:''};"}));
- const page=await context.newPage(),errors=[];page.on('pageerror',e=>errors.push(e.message));
- await page.goto('http://127.0.0.1:4173');await page.locator('#startBtn').click();await page.locator('#choices button').first().waitFor();
- for(let i=0;i<4;i++){
- await page.locator('#choices button').first().click();await page.locator('#sourceList input').first().waitFor();
- assert.equal(await page.locator('#nextBtn').isDisabled(),true);
- assert.ok(await page.locator('#sourceList input').count()>=3);
- const url=page.url();
- // Stop the new tab's actual network request; only link targeting/selection independence is under test.
- await context.route('https://www.zhihu.com/**',r=>r.fulfill({body:'source'}));await context.route('https://zhuanlan.zhihu.com/**',r=>r.fulfill({body:'source'}));
- const popup=page.waitForEvent('popup');await page.locator('.source-bottom a').first().click();await (await popup).close();
- assert.equal(page.url(),url);assert.equal(await page.locator('#nextBtn').isDisabled(),true);
- await page.locator('#sourceList input').first().check();await page.waitForFunction(()=>!document.getElementById('nextBtn').disabled);
- const old=await page.locator('#selectedQuestion').textContent();
- await page.locator('#sourceList input').nth(1).check();await page.waitForFunction(prior=>document.getElementById('selectedQuestion').textContent!==prior,old);
- const selected=await page.locator('#selectedQuestion').textContent();
- await page.locator('#nextBtn').click();
- if(i<3){await page.waitForFunction(index=>document.querySelector('#steps li.current .step-number')?.textContent===String(index+2).padStart(2,'0'),i);assert.equal(await page.locator('#carryQuestion').textContent(),selected);}else await page.locator('#endingTitle').waitFor();
- }
- assert.equal(await page.locator('#history li').count(),4);await page.locator('#todayAction').fill('今天花 20 分钟了解一个岗位的日常');
- const download=page.waitForEvent('download');await page.locator('#saveBtn').click();assert.match((await download).suggestedFilename(),/书签/);
- await page.locator('#againBtn').click();await page.locator('#choices button').first().waitFor();assert.equal(await page.locator('#carry').isVisible(),false);
- await page.setViewportSize({width:390,height:844});await page.locator('#choices button').first().click();await page.locator('#sourceList input').first().waitFor();
- assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);
- await page.screenshot({path:'work/qa-mobile-'+mode+'.png',fullPage:true});
- assert.deepEqual(errors,[]);console.log(mode+': full journey, independent source link, replace selection, carry, ending, download, restart and mobile passed');await context.close();
- }
+import {createRequire} from 'node:module';import assert from 'node:assert/strict';
+const require=createRequire(import.meta.url);const {chromium}=require(process.env.PLAYWRIGHT_MODULE||'playwright');const browser=await chromium.launch({channel:'chrome',headless:true});
+try{for(const width of [1440,390]){const context=await browser.newContext({viewport:{width,height:900},acceptDownloads:true,reducedMotion:'reduce'});let sourceRequests=0;const errors=[];const page=await context.newPage();page.on('pageerror',e=>errors.push(e.message));await context.route('**/api/guide/session',r=>r.fulfill({json:{token:'test'}}));await context.route('**/api/guide/sources',async r=>{sourceRequests++;await new Promise(resolve=>setTimeout(resolve,1200));await r.fulfill({json:{mode:'curated',references:[],reason:'测试离线回退'}});});await context.route('https://www.zhihu.com/**',r=>r.fulfill({body:'Source'}));await context.route('https://zhuanlan.zhihu.com/**',r=>r.fulfill({body:'Source'}));await page.goto('http://127.0.0.1:4173/');await page.locator('#startBtn').click();
+for(let i=0;i<4;i++){await page.locator('#choices button').first().click();assert.equal(await page.locator('#evidence').isVisible(),false);if(i<3){await page.locator('[data-time="1"]').click();assert.equal(await page.locator('#effortRemainder').innerText(),'2');}else assert.equal(await page.locator('#timeBudget').isVisible(),false);await page.locator('#commitChoice').click();await page.locator('#adoptSource').waitFor();const first=await page.locator('.experience-card').getAttribute('data-source');await page.locator('#nextSource').click();assert.notEqual(await page.locator('.experience-card').getAttribute('data-source'),first);await page.locator('.source-details summary').click();const popup=page.waitForEvent('popup');await page.locator('.source-details a').click();await(await popup).close();assert.ok(await page.locator('#evidence').isVisible());assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);await page.locator('#adoptSource').click();if(i<3)await page.locator('#choices button').first().waitFor();}
+await page.locator('#endingTitle').waitFor();assert.equal(await page.locator('#history li').count(),4);assert.ok(!(await page.locator('#history li').last().innerText()).includes('投入'));const download=page.waitForEvent('download');await page.locator('#saveBtn').click();assert.match((await download).suggestedFilename(),/书签/);await page.locator('#againBtn').click();await page.locator('#choices button').first().click();await page.screenshot({path:`work/qa-2.1-preview-${width}.png`,fullPage:true});await page.locator('#commitChoice').click();await page.screenshot({path:`work/qa-2.1-source-${width}.png`,fullPage:true});assert.equal(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth),false);assert.deepEqual(errors,[]);console.log(width,'full journey, effort, switch source, original link, ending, bookmark, restart, overflow pass',sourceRequests);await context.close();}
+const context=await browser.newContext(),page=await context.newPage();await context.route('**/api/guide/session',r=>r.fulfill({json:{token:'test'}}));await context.route('**/api/guide/sources',async r=>{await new Promise(resolve=>setTimeout(resolve,700));await r.fulfill({json:{mode:'live',snapshot_id:'test',total:1,references:[{id:'live_test',url:'https://www.zhihu.com/question/1/answer/1',title:'测试来源',summary:'足够长的测试摘要，用于验证延迟结果不会覆盖用户正在操作的卡片。',short_summary:'新的经历',author:'测试',type:'知乎检索摘要',question:'准备哪一步？',action:'试一次',lens:{label:'试一次',gain:'反馈',cost:'时间',focus:'academic'}}]}});});await page.goto('http://127.0.0.1:4173');await page.locator('#startBtn').click();await page.locator('#choices button').first().click();await page.locator('#commitChoice').click();await page.locator('.source-details summary').click();const id=await page.locator('.experience-card').getAttribute('data-source');await page.locator('#newSources').waitFor();assert.equal(await page.locator('.experience-card').getAttribute('data-source'),id);await page.locator('#newSources').click();assert.equal(await page.locator('.experience-card').getAttribute('data-source'),'live_test');await page.locator('#adoptSource').click();assert.equal(await page.locator('[data-choice=follow_source] strong').innerText(),'试一次');console.log('late retrieval protects active card and dynamic source changes next action pass');await context.close();
 }finally{await browser.close();}

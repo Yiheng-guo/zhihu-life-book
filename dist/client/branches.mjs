@@ -36,16 +36,17 @@ export function branchFor(s){
  if(s.index===1){b=previous.choiceId==='ask'
   ?{id:'explore_rules',title:'规则查清后，先走哪一步？',narration:'你找到一些校内机会，但查到信息与适合自己，是两件事。',options:[OPTIONS.transfer_prepare,OPTIONS.course]}
   :{id:'explore_trial',title:'试过一次，还想继续吗？',narration:'第一次尝试留下了兴趣，也占用了时间。你愿意再投入多少？',options:[OPTIONS.practice,OPTIONS.rethink]};
- }else if(s.index===2){b=previous.focus==='academic'
+ }else if(s.index===2){b=previous.effort===3?{id:'junior_intensive',title:'投入很多，也要留出余地',narration:'上一幕的课余时段全部用完。先重排课程与生活，再决定怎么继续。',options:[OPTIONS.rethink,OPTIONS.budget_plan]}:previous.effort===1?{id:'junior_limited',title:'时间有限，怎么继续？',narration:'上一幕你只投入一个课余时段，保留了其他安排。这次先让计划可以持续。',options:[OPTIONS.budget_plan,OPTIONS.small_practice]}:previous.focus==='academic'
   ?{id:'junior_academic',title:'学习更深，还是先看看工作？',narration:'你沿着课程与专业探索了一段。大三临近，学习和实践开始争用时间。',options:[OPTIONS.prepare,OPTIONS.intern]}
   :previous.focus==='practice'&&previous.choiceId==='follow_source'
    ?{id:'junior_workday',title:'岗位看过了，先验证哪一件事？',narration:'你比较过岗位日常，还没有亲手做过。可以先问一次实习，也可以试一个小项目。',options:[OPTIONS.intern,OPTIONS.practice]}
    :previous.focus==='practice'
    ?{id:'junior_portfolio',title:'作品有了，缺口也看见了',narration:'小项目留下了成果，也暴露了不足。接下来是先获取外部反馈，还是补基础？',options:[OPTIONS.portfolio_intern,OPTIONS.study_gap]}
    :{id:'junior_sustainable',title:'先让计划，装得进生活',narration:'你开始重视能持续的尝试。大三的准备，要一起考虑时间、支出和状态。',options:[OPTIONS.budget_plan,OPTIONS.small_practice]};
- }else{const f=finals[previous.focus]||finals.sustainable;return {id:'graduation_'+(previous.focus||'sustainable'),title:f.title,narration:f.text,primary:f.primary};}
- const lens=SOURCE_LENSES[previous.sourceId];
- return {...b,options:[...b.options,{id:'follow_source',...lens,sourceId:previous.sourceId,refs:[previous.sourceId,...b.options[0].refs.filter(id=>id!==previous.sourceId)].slice(0,3)}]};
+ }else{const f=finals[previous.focus]||finals.sustainable;return {id:'graduation_'+(previous.focus||'sustainable'),title:f.title,narration:previous.effort===3?'这一段你把课余时间全部投入准备。结果仍不确定，下面是可以探索的毕业处境。':f.text,primary:f.primary};}
+ const lens=s.sourceCatalog?.[previous.sourceId]?.lens||SOURCE_LENSES[previous.sourceId];
+ if(s.index===1&&previous.effort===3)b={...b,id:b.id+'_intensive',title:'投入很多，怎么接住生活？',narration:'课余时间都给了探索，其他安排被挤到一边。先决定要不要调整节奏。',options:[b.options[0],OPTIONS.rethink]};
+ return {...b,narration:s.index===1&&previous.effort===1?'上次你只留了一小段时间尝试。还有未问清、未试完的部分，这次怎么安排？':b.narration,options:[...b.options,{id:'follow_source',...lens,sourceId:previous.sourceId,refs:[previous.sourceId,...b.options[0].refs.filter(id=>id!==previous.sourceId)].slice(0,3)}]};
 }
 export const SHORT_SOURCES={
  major_transfer:'建议先查本校转专业条件、期限与准备要求。',major_first:'作者自述凭大一成绩申请转专业获通过。',

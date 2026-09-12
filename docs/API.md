@@ -31,3 +31,15 @@
 返回 `{mode:live|cached|curated,reflection,next_step,question,citations:[{id,title,url,author}],tools,reason?}`。前端不得把 curated 标为实时 AI；只用 textContent 渲染。更换来源或翻页后丢弃旧请求。
 
 公网故事仍在浏览器即时推进；本地 `/api/story/*` 保留给团队联调，公网只提供 guide 与 healthz。
+
+## 2.1 动态来源与流式向导
+
+本地页面与公网页面都使用浏览器状态机即时推进；`/api/story/*` 仍供旧规则联调，不承载动态快照挂载。动态来源由下面的服务端流程验证。
+
+`POST /api/guide/sources`：`{token,history:[{choice_id,source_id,source_snapshot,effort}],choice_id,effort,concern:'direction'|'time'|'budget',angle:0|1|2,seen?:string[]}`。
+
+返回 `{mode:'live'|'cached'|'curated',references,snapshot_id?,query?,total?,reason?}`。动态 references 含 `id,title,url,summary,short_summary,author,type,lens,question,action,retrieved_at`。`summary` 仅为知乎检索摘要；`lens` 是受内容启发的产品行动模板。成功时客户端用共享 `attachSources` 装入当前来源页。失败保留原卡片，并显示原因。客户端不得将未验证正文作为请求中的服务端来源。
+
+`POST /api/guide` 增加 `source_snapshot,effort`，历史中的每一条也带这两个字段；动态历史必须携带原快照。快照在服务端绑定会话、路径、行动与投入；不可跨用户、跨节点或跨行动重用。
+
+设置 `stream:true` 返回 `application/x-ndjson`：`{type:'preview'}` 仅表示已收到生成内容，不能表示答案已核验；`{type:'done',answer}` 含最终结果；`{type:'error',message}` 是失败。前端在 done 前不显示正文/采纳按钮；取消、返回或换卡应 abort，忽略旧请求。

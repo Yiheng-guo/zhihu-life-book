@@ -1,6 +1,7 @@
 import { content } from './content.mjs';
 import { branchFor, SOURCE_LENSES, SHORT_SOURCES } from './branches.mjs';
-export const VERSION = '2.0';
+import {sourceAt,lensAt,questionAt,shortAt} from './source-utils.mjs';
+export const VERSION = '2.1';
 export const STAGES = ['freshman_start','explore','junior','graduation'];
 export const SOURCES = content.refs;
 export const QUESTIONS = content.sourceQuestion;
@@ -25,8 +26,9 @@ export const ACTIONS = {
 };
 export class StoryError extends Error { constructor(code,message){super(message);this.code=code;} }
 const fail=(code,message)=>{throw new StoryError(code,message)};
-export function createState(){return {version:VERSION,revision:0,index:0,phase:'story',choiceId:null,sourceId:null,history:[]};}
-const reference=(id)=>({id,...SOURCES[id],short_summary:SHORT_SOURCES[id],question:QUESTIONS[id],action:ACTIONS[id]});
+export function createState(){return {version:VERSION,revision:0,index:0,phase:'story',choiceId:null,sourceId:null,history:[],sourceCatalog:{},sourceBatch:null,effort:2};}
+const reference=(s,id)=>({id,...sourceAt(s,id),lens:lensAt(s,id),short_summary:shortAt(s,id),question:questionAt(s,id),action:sourceAt(s,id)?.action||ACTIONS[id]});
+export function attachSources(original,references,snapshot_id){if(original.phase!=='sources'||!Array.isArray(references)||!references.length||references.length>10)fail('INVALID_SOURCE','来源列表无效');const s=structuredClone(original);for(const r of references){if(!r.id||!r.url||!r.summary||!r.lens)fail('INVALID_SOURCE','来源资料不完整');s.sourceCatalog[r.id]=r;}s.sourceBatch={choiceId:s.choiceId,snapshot_id,ids:references.map(r=>r.id)};s.sourceId=null;s.revision++;return s;}
 const ENDING_REFS={
  admitted:['college_planning','major_first','graduate_three'],exam:['graduate_work','graduate_three','jobless'],
  civil:['jobless','graduate_work','college_planning'],work:['intern_review','graduate_work','graduate_three'],
@@ -53,21 +55,21 @@ function choicesFor(s,b){
 }
 function snapshot(s){
  const branch=branchFor(s),choices=choicesFor(s,branch),selected=choices.find(c=>c.id===s.choiceId);
- const refs=s.index===3?(ENDING_REFS[s.choiceId]||content.nodeRefs.graduation):(selected?.refs||branch.options[0].refs);
+ const refs=s.sourceBatch?.choiceId===s.choiceId?s.sourceBatch.ids:s.index===3?(ENDING_REFS[s.choiceId]||content.nodeRefs.graduation):(selected?.refs||branch.options[0].refs);
  return {branch,choices,selected,refs};
 }
 export function view(s){
  const id=STAGES[s.index], {branch,choices,selected,refs}=snapshot(s), previous=s.history[s.index-1];
- const sourceNext=s.sourceId&&SOURCE_LENSES[s.sourceId];
+ const sourceNext=s.sourceId&&lensAt(s,s.sourceId);
  const echo=selected?(s.index===3?{title:content.endings[s.choiceId][0],text:content.endings[s.choiceId][1]}:{title:selected.label,text:selected.text}):null;
  return {version:VERSION,revision:s.revision,phase:s.phase,index:s.index,node_id:id,branch_id:branch.id,
   node:{label:content.nodes[id].label,title:branch.title,narration:branch.narration,choices},
   choice_id:s.choiceId,source_id:s.sourceId,echo,
-  references:refs.map(reference),
-  source_preview:sourceNext?{label:s.index===3?'带回今天的问题':s.index===2?'带到毕业页的问题':'下一页多一个可选行动',text:s.index>=2?QUESTIONS[s.sourceId]:sourceNext.label}:null,
-  carry:previous?{source:SOURCES[previous.sourceId],question:QUESTIONS[previous.sourceId],choice:previous.choiceLabel,action:ACTIONS[previous.sourceId]}:null,
-  history:s.history.map(h=>({...h,stage:content.nodes[h.nodeId].label,source:SOURCES[h.sourceId],question:QUESTIONS[h.sourceId]})),
-  ending:s.phase==='ending'?{title:content.endings[s.choiceId][0],text:content.endings[s.choiceId][1],question:QUESTIONS[s.sourceId],action:ENDING_STEPS[s.choiceId],tradeoff:TRADEOFFS[s.choiceId]}:null};
+  references:refs.map(id=>reference(s,id)),effort:s.effort,source_snapshot:s.sourceBatch?.snapshot_id||null,
+  source_preview:sourceNext?{label:s.index===3?'带回今天的问题':s.index===2?'带到毕业页的问题':'下一页多一个可选行动',text:s.index>=2?questionAt(s,s.sourceId):sourceNext.label}:null,
+  carry:previous?{source:sourceAt(s,previous.sourceId),question:questionAt(s,previous.sourceId),choice:previous.choiceLabel,action:sourceAt(s,previous.sourceId)?.action||ACTIONS[previous.sourceId]}:null,
+  history:s.history.map(h=>({...h,stage:content.nodes[h.nodeId].label,source:sourceAt(s,h.sourceId),question:questionAt(s,h.sourceId)})),
+  ending:s.phase==='ending'?{title:content.endings[s.choiceId][0],text:content.endings[s.choiceId][1],question:questionAt(s,s.sourceId),action:ENDING_STEPS[s.choiceId],tradeoff:TRADEOFFS[s.choiceId]}:null};
 }
 export function transition(original,event){
  if(!event||event.revision!==original.revision)fail('STALE_STATE','页面状态已变化，请重新加载这一步。');
@@ -77,18 +79,18 @@ export function transition(original,event){
  if(event.type==='choose'){
   if(s.phase!=='story')fail('INVALID_PHASE','请先回到当前选择。');
   if(!choices.some(c=>c.id===event.choice_id))fail('INVALID_CHOICE','这个选择不属于当前处境。');
-  s.choiceId=event.choice_id;s.sourceId=null;s.phase='sources';
+  if(event.effort!==undefined&&(!Number.isInteger(event.effort)||event.effort<1||event.effort>3))fail('INVALID_EFFORT','请分配1至3个课余时段。');s.effort=event.effort??2;s.choiceId=event.choice_id;s.sourceId=null;s.sourceBatch=null;s.phase='sources';
  }else if(event.type==='select'){
   if(s.phase!=='sources')fail('INVALID_PHASE','现在无法选择来源。');
   if(!refs.includes(event.source_id))fail('INVALID_SOURCE','请选择这一页提供的来源。');
   s.sourceId=event.source_id;
  }else if(event.type==='advance'){
   if(s.phase!=='sources'||!s.sourceId)fail('SOURCE_REQUIRED','请先选择一段经历或建议。');
-  s.history.push({nodeId:id,branchId:branch.id,choiceId:s.choiceId,choiceLabel:selected.label,sourceId:s.sourceId,focus:selected.focus||null,gain:selected.gain,cost:selected.cost,inspiredBy:selected.sourceId||null});
-  if(s.index===3)s.phase='ending';else{s.index++;s.phase='story';s.choiceId=null;s.sourceId=null;}
+  s.history.push({nodeId:id,branchId:branch.id,choiceId:s.choiceId,choiceLabel:selected.label,sourceId:s.sourceId,focus:selected.focus||null,gain:selected.gain,cost:selected.cost,inspiredBy:selected.sourceId||null,effort:s.effort,source_snapshot:s.sourceBatch?.snapshot_id||null});
+  if(s.index===3)s.phase='ending';else{s.index++;s.phase='story';s.choiceId=null;s.sourceId=null;s.sourceBatch=null;}
  }else if(event.type==='back'){
   if(s.phase!=='sources')fail('INVALID_PHASE','当前不能返回选择。');
-  s.phase='story';s.choiceId=null;s.sourceId=null;
+  s.phase='story';s.choiceId=null;s.sourceId=null;s.sourceBatch=null;
  }else fail('INVALID_EVENT','无法识别这次操作。');
  s.revision++;return s;
 }

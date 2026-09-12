@@ -1,6 +1,6 @@
 import {copyFile,mkdir,readFile,writeFile,rm} from 'node:fs/promises';
 import {build} from 'esbuild';
-const files=['index.html','styles.css','app.mjs','content.mjs','story.mjs','config.js','cover.mjs','branches.mjs','experience.mjs'];
+const files=['index.html','styles.css','app.mjs','content.mjs','story.mjs','config.js','cover.mjs','branches.mjs','experience.mjs','source-utils.mjs','game.mjs'];
 await rm('dist',{recursive:true,force:true});await mkdir('dist/client',{recursive:true});await mkdir('dist/server',{recursive:true});
 const assets={};for(const name of files){await copyFile('frontend/'+name,'dist/client/'+name);assets['/'+name]={body:await readFile('frontend/'+name,'utf8'),type:name.endsWith('.html')?'text/html; charset=utf-8':name.endsWith('.css')?'text/css; charset=utf-8':'text/javascript; charset=utf-8'};}
 if(!assets['/index.html'].body.includes((await readFile('VERSION','utf8')).trim()))throw new Error('Missing version');
