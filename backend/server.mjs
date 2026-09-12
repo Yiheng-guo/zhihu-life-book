@@ -6,8 +6,8 @@ import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {createState,transition,view} from '../frontend/story.mjs';
 const frontend=new URL('../frontend/',import.meta.url);
-const files=new Set(['index.html','styles.css','app.mjs','content.mjs','story.mjs','config.js','cover.mjs','branches.mjs','experience.mjs','source-utils.mjs','game.mjs']);
-const MIME={html:'text/html; charset=utf-8',css:'text/css; charset=utf-8',mjs:'text/javascript; charset=utf-8',js:'text/javascript; charset=utf-8'};
+const files=new Set(['index.html','styles.css','app.mjs','content.mjs','story.mjs','config.js','cover.mjs','branches.mjs','experience.mjs','source-utils.mjs','game.mjs','play-state.mjs','voices.mjs','audio.mjs']);
+const MIME={html:'text/html; charset=utf-8',css:'text/css; charset=utf-8',mjs:'text/javascript; charset=utf-8',js:'text/javascript; charset=utf-8',jpg:'image/jpeg'};
 const json=(res,status,body)=>{res.writeHead(status,{'content-type':'application/json; charset=utf-8','cache-control':'no-store'});res.end(JSON.stringify(body));};
 async function body(req){let raw='';for await(const c of req){raw+=c;if(Buffer.byteLength(raw)>16384)throw Object.assign(new Error('请求过长'),{status:413});}try{return JSON.parse(raw||'{}');}catch{throw Object.assign(new Error('请求不是有效 JSON'),{status:400});}}
 export function createServer(){
@@ -35,6 +35,7 @@ export function createServer(){
  }
  if(req.method==='GET'){
   const name=path==='/'?'index.html':path.slice(1);
+  if(name==='assets/campus.jpg') { const data=await readFile(new URL('../frontend/campus.jpg',frontend)); res.writeHead(200,{'content-type':'image/jpeg','cache-control':'public,max-age=86400'}); return res.end(data); }
   if(!files.has(name))return json(res,404,{code:'NOT_FOUND',message:'没有这个页面'});
   const data=name==='config.js'?"window.LIFE_BOOK_CONFIG = {mode:'local',apiBase:'',guideEndpoint:'/api/guide'};":await readFile(new URL(name,frontend));
   res.writeHead(200,{'content-type':MIME[name.split('.').at(-1)],'cache-control':'no-cache'});return res.end(data);

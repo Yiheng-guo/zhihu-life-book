@@ -1,0 +1,15 @@
+import {createState,transition,view,attachSources} from './story.mjs';
+const api=(globalThis.LIFE_BOOK_CONFIG||{}).guideEndpoint||'/api/guide';
+const stageFor=g=>g.scene<2?0:g.scene<4?1:g.scene===4?2:3;
+function choices(g){return [g.route||'project',g.night.includes('knock')?'talk_roommate':g.tactics.length?'ask_source':'carry_alone',g.destination==='exam'?'exam_full':g.destination==='trial'?'balance':'intern','reply'];}
+function context(g){let s=createState();const list=choices(g),stage=stageFor(g);const step=(type,fields={})=>s=transition(s,{type,node_id:view(s).node_id,revision:s.revision,...fields});for(let i=0;i<=stage;i++){step('choose',{choice_id:list[i]});if(i<stage){step('select',{source_id:view(s).references[0].id});step('advance');}}return s;}
+export function createVoices(){let token,tokenPromise,ctx,key,epoch=0,controller,aiController;let status='curated',reason='已保存的知乎经历摘要';
+ const json=async(path,body,signal)=>{const r=await fetch(path,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify(body),signal});const d=await r.json();if(!r.ok){if(r.status===401)token=null;throw Error(d.message||'暂时无法连接知乎');}return d;};
+ async function session(){if(token)return token;if(!tokenPromise)tokenPromise=json(api+'/session',{},AbortSignal.timeout(6000)).then(d=>token=d.token).finally(()=>tokenPromise=null);return tokenPromise;}
+ function ensure(g){const k=stageFor(g)+':'+choices(g).join('/');if(k!==key){epoch++;controller?.abort();aiController?.abort();key=k;ctx=context(g);status='curated';reason='已保存的知乎经历摘要';}return view(ctx);}
+ function payload(){const v=view(ctx);return {token,history:v.history.map(h=>({choice_id:h.choiceId,source_id:h.sourceId,effort:h.effort})),choice_id:v.choice_id,source_id:v.source_id,source_snapshot:v.source_snapshot,effort:v.effort};}
+ return {current(g){return {view:ensure(g),status,reason};},cancel(){epoch++;controller?.abort();aiController?.abort();},
+ async search(g){ensure(g);const id=++epoch;controller?.abort();controller=new AbortController();status='loading';try{await session();if(id!==epoch)return;const d=await json(api+'/sources',{...payload(),source_id:null,source_snapshot:null,concern:'direction',angle:0,seen:g.tactics.map(x=>x.id).slice(-20)},AbortSignal.any([controller.signal,AbortSignal.timeout(8000)]));if(id!==epoch)return;if(d.references?.length){ctx=attachSources(ctx,d.references,d.snapshot_id);status=d.mode;reason=(d.mode==='live'?'本次知乎检索':'近期检索缓存')+' · '+d.total+' 条';}else{status='curated';reason=d.reason||'未找到新经历，保留预整理内容';}}catch(e){if(id!==epoch)return;status='curated';reason=e.message||'暂时离线，使用已保存的经历';}return {view:view(ctx),status,reason};},
+ async ask(g,sourceId,question){ensure(g);const id=epoch;await session();if(id!==epoch)throw Error('已经进入新的场景');ctx=transition(ctx,{type:'select',revision:ctx.revision,node_id:view(ctx).node_id,source_id:sourceId});aiController?.abort();aiController=new AbortController();const d=await json(api,{...payload(),question:question.slice(0,160),stream:false},AbortSignal.any([aiController.signal,AbortSignal.timeout(12000)]));if(id!==epoch)throw Error('已经进入新的场景');return d;}
+ };
+}
