@@ -1,1 +1,1 @@
-{"name":"zhihu-life-book","private":true,"type":"module","engines":{"node":">=22"},"scripts":{"dev":"node backend/server.mjs","build":"node scripts/build.mjs","test":"node --test tests/*.test.mjs"}}
+{"name":"zhihu-life-book","private":true,"type":"module","engines":{"node":">=22"},"scripts":{"dev":"node backend/server.mjs","build":"node scripts/build.mjs","test":"node --test tests/*.test.mjs"},"dependencies":{"drizzle-orm":"^0.45.2"},"devDependencies":{"drizzle-kit":"^0.31.10","esbuild":"^0.28.2"}}

@@ -1,6 +1,6 @@
 import { content } from './content.mjs';
 import { branchFor, SOURCE_LENSES, SHORT_SOURCES } from './branches.mjs';
-export const VERSION = '1.3';
+export const VERSION = '2.0';
 export const STAGES = ['freshman_start','explore','junior','graduation'];
 export const SOURCES = content.refs;
 export const QUESTIONS = content.sourceQuestion;

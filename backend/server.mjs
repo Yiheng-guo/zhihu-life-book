@@ -1,18 +1,23 @@
 import http from 'node:http';
+import {guideHttp} from './guide.mjs';
+import {localStore} from './local-store.mjs';
 import {randomUUID} from 'node:crypto';
 import {readFile} from 'node:fs/promises';
 import {fileURLToPath} from 'node:url';
 import {createState,transition,view} from '../frontend/story.mjs';
 const frontend=new URL('../frontend/',import.meta.url);
-const files=new Set(['index.html','styles.css','app.mjs','content.mjs','story.mjs','config.js','cover.mjs','branches.mjs']);
+const files=new Set(['index.html','styles.css','app.mjs','content.mjs','story.mjs','config.js','cover.mjs','branches.mjs','experience.mjs']);
 const MIME={html:'text/html; charset=utf-8',css:'text/css; charset=utf-8',mjs:'text/javascript; charset=utf-8',js:'text/javascript; charset=utf-8'};
 const json=(res,status,body)=>{res.writeHead(status,{'content-type':'application/json; charset=utf-8','cache-control':'no-store'});res.end(JSON.stringify(body));};
 async function body(req){let raw='';for await(const c of req){raw+=c;if(Buffer.byteLength(raw)>16384)throw Object.assign(new Error('请求过长'),{status:413});}try{return JSON.parse(raw||'{}');}catch{throw Object.assign(new Error('请求不是有效 JSON'),{status:400});}}
 export function createServer(){
- const sessions=new Map();const ttl=2*60*60*1000;
+ const guideStore=localStore();const sessions=new Map();const ttl=2*60*60*1000;
  return http.createServer(async(req,res)=>{try{
  const path=new URL(req.url,'http://localhost').pathname;
- if(req.method==='GET'&&path==='/healthz')return json(res,200,{ok:true,version:'1.3',mode:'curated',runtime_ai:false});
+ if(req.method==='GET'&&path==='/healthz')return json(res,200,{ok:true,version:'2.0',mode:'curated',runtime_ai:!!process.env.ZHIHU_ACCESS_SECRET});
+ if(req.method==='POST'&&path.startsWith('/api/guide')){
+ const data=await body(req);const request=new Request('http://'+req.headers.host+path,{method:'POST',headers: {...req.headers,'content-type':'application/json'},body:JSON.stringify(data)});const response=await guideHttp(request,process.env,{store:guideStore});res.writeHead(response.status,Object.fromEntries(response.headers));return res.end(await response.text());
+ }
  if(req.method==='POST'&&path.startsWith('/api/')){
   // Local same-origin service; deployment with remote browsers needs an explicit origin/auth policy.
   if(req.headers.origin&&new URL(req.headers.origin).host!==req.headers.host)return json(res,403,{code:'ORIGIN_DENIED',message:'请求来源不受支持'});
@@ -31,7 +36,7 @@ export function createServer(){
  if(req.method==='GET'){
   const name=path==='/'?'index.html':path.slice(1);
   if(!files.has(name))return json(res,404,{code:'NOT_FOUND',message:'没有这个页面'});
-  const data=name==='config.js'?"window.LIFE_BOOK_CONFIG = {mode:'api',apiBase:''};":await readFile(new URL(name,frontend));
+  const data=name==='config.js'?"window.LIFE_BOOK_CONFIG = {mode:'api',apiBase:'',guideEndpoint:'/api/guide'};":await readFile(new URL(name,frontend));
   res.writeHead(200,{'content-type':MIME[name.split('.').at(-1)],'cache-control':'no-cache'});return res.end(data);
  }
  json(res,405,{code:'METHOD_NOT_ALLOWED',message:'不支持的请求方式'});

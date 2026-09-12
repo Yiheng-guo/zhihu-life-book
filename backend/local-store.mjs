@@ -1,0 +1,3 @@
+import {DatabaseSync} from 'node:sqlite';
+import {D1GuideStore} from './guide.mjs';
+export function localStore(){const db=new DatabaseSync(':memory:');db.exec('CREATE TABLE guide_counters(key TEXT PRIMARY KEY,used INTEGER NOT NULL DEFAULT 0,expires INTEGER NOT NULL); CREATE TABLE guide_cache(key TEXT PRIMARY KEY,value TEXT,expires INTEGER NOT NULL);');const adapter={prepare(sql){const s=db.prepare(sql);return {bind(...args){return {first:async()=>s.get(...args)||null,run:async()=>s.run(...args)};}}},async batch(statements){return Promise.all(statements.map(s=>s.run()));}};return new D1GuideStore(adapter);}

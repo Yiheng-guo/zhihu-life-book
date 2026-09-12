@@ -21,3 +21,13 @@
 `GET /healthz` 返回 `{ok, version, mode, runtime_ai}`。未知路径和无效请求统一返回 JSON `{code, message}`。本地会话只保存在内存并自动过期，公网静态体验不上传个人输入。
 
 1.3 的 view 增加 branch_id、来源的 short_summary、source_preview 和条件选项。客户端必须使用当次返回的 choices，不能硬编码某个阶段可选的 ID；同名 follow_source 行动的文字和 focus 由会话里上页来源决定。history 保存实际选项标签与来源。
+
+## 2.0 公网经历向导
+
+`POST /api/guide/session`：返回 2 小时有效的签名 token。
+
+`POST /api/guide`：`{token,history:[{choice_id,source_id}],choice_id,source_id,question,followup?:boolean}`。history 仅传已完成阶段，最多3条；question 1–160字。服务端重放验证，不能从另一分支伪造行动。followup 为 true 时加入同一节点/来源最近一轮已验证对话。
+
+返回 `{mode:live|cached|curated,reflection,next_step,question,citations:[{id,title,url,author}],tools,reason?}`。前端不得把 curated 标为实时 AI；只用 textContent 渲染。更换来源或翻页后丢弃旧请求。
+
+公网故事仍在浏览器即时推进；本地 `/api/story/*` 保留给团队联调，公网只提供 guide 与 healthz。

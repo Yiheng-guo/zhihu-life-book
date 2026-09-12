@@ -13,3 +13,6 @@ coverage/
 *.log
 secrets/
 credentials/
+
+backend/assets.generated.mjs
+work/local-guide.sqlite*
