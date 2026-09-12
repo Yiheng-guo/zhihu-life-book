@@ -1,6 +1,6 @@
 import http from 'node:http';
 const port=process.env.PORT||8787;
-const sources=[{title:'关于大学迷茫与选择的真实回答',summary:'这里接入经核验的知乎公开回答摘要；当前演示保留来源入口与降级路径。',url:'https://www.zhihu.com/search?q=%E5%A4%A7%E5%AD%A6%20%E8%BF%B7%E8%8C%AB%20%E9%80%89%E6%8B%A9'}];
+const sources=[{title:'大学学的不是喜欢的专业怎么办?',author:'知你you',content_type:'知乎回答',summary:'作者整理转专业流程，并用身边案例说明：被调剂或不喜欢当前专业时，应关注学校官方通知与要求，保持绩点并准备面试。',url:'https://www.zhihu.com/question/30728453/answer/2070850819293984726?utm_medium=openapi_platform&utm_source=cf621feb3f2d'},{title:'毕业一年闯荡社会的真实血泪史',author:'levares',content_type:'知乎文章',summary:'作者自述考研落榜、错过实习以及毕业后进入与预期不符的高强度岗位；这是个人经历，不代表普遍结局。',url:'https://zhuanlan.zhihu.com/p/719380437?utm_medium=openapi_platform&utm_source=cf621feb3f2d'},{title:'只顾埋头学习,这件事不想清楚,大四毕业真的会后悔',author:'作者署名待核验',content_type:'知乎文章',summary:'文章建议把大学四年分阶段探索、聚焦方向并尝试实习，再权衡就业或深造；这是文章建议，不是统计结论。',url:'https://zhuanlan.zhihu.com/p/2077121110202642883?utm_medium=openapi_platform&utm_source=cf621feb3f2d'}];
 const headers={'content-type':'application/json; charset=utf-8','access-control-allow-origin':'*','access-control-allow-headers':'content-type'};
 const send=(res,status,data)=>{res.writeHead(status,headers);res.end(JSON.stringify(data));};
 const start=()=>({session_id:'demo-'+Date.now(),node_id:'freshman_start',title:'大学的第一页',narration:'你拿到录取通知书的那天，所有人都在说这是一个新的开始。可真正的大学生活，要从你如何使用这些时间开始。',choices:[{id:'ask',label:'先去了解别人怎么走过这段路',hint:'把困惑变成一个可以请教的问题'},{id:'try',label:'先选一件小事，今天就开始试试',hint:'不用等想明白一生，先写下下一步'}]});
