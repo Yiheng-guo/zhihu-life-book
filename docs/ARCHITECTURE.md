@@ -1,4 +1,4 @@
-# 1.1 落地路线与技术说明
+# 1.2 落地路线与技术说明
 
 ## 用户实际体验
 
@@ -31,7 +31,7 @@ flowchart LR
 | frontend/content.mjs | 人工复核的来源、剧情节点与结局 |
 | frontend/story.mjs | 节点与事件校验、路径记录、承接问题 |
 | backend/server.mjs | 同源 JSON API、会话隔离、请求体限制、过期控制 |
-| scripts/build.mjs | 只将 6 个公开文件复制到 dist |
+| scripts/build.mjs | 只将 7 个公开文件复制到 dist |
 
 公网 Sites 当前只发布 `dist/` 静态文件，Node 后端没有随之上线。正式接入需要将服务器逻辑部署到受支持的 Worker 或独立后端；不能把 Node 的 http.listen 入口直接当 Worker。正式共享会话还需持久化、限流和会话权限。
 
@@ -50,3 +50,7 @@ flowchart LR
 ## 本轮验证
 
 `npm test` 的 5 项测试覆盖来源必选与替换、8 种结局、4 节连续性、无效事件与过期版本、会话隔离及 API。`tests/ui-smoke.mjs` 以本地安装的 Playwright 对静态与 API 两种模式实际点击完整流程，检查独立原文链接、来源更换、承接问题、结尾、下载、重新开始和 390px 手机宽度无横向溢出。原文新窗口的网络请求在回归中被拦截，测试验证跳转行为，不代表已逐个验证知乎页面的公网可访问性。
+
+## 1.2 封面交接
+
+`frontend/cover.mjs` 仅负责封面光线与开场转场，不包含节点规则。`styles.css` 末尾的 1.2 cover 区域集中控制封面样式，`index.html` 的 intro 区域为封面结构。正文结构不需跟随封面改动；谭一凡、王涵硕可自行分工深化交互与视觉。此轮没有引入图片生成、WebGL 或新 API 费用。
