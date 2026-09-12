@@ -2,7 +2,7 @@ import test from 'node:test';import assert from 'node:assert/strict';
 import {runGuide,issueSession,replayContext,guideHttp,safeZhihuUrl,verifySession} from '../backend/guide.mjs';
 import {localStore} from '../backend/local-store.mjs';
 const secret='test-only-secret-with-no-real-credentials';
-const data=async(question='我担心试错耽误学习，怎么办？')=>({history:[],choice_id:'ask',source_id:'major_first',question,token:await issueSession(secret)});
+const data=async(question='我担心试错耽误学习，怎么办？')=>({history:[],choice_id:'study_plan',source_id:'major_first',question,token:await issueSession(secret)});
 const answer={reflection:'先把试错压到一次短体验，不急着决定整个专业方向。',next_step:'这周找目标专业同学问一门课程的实际任务，约定二十分钟。',question:'目前最担心的是时间还是成绩？',source_ids:['major_first']};
 const response=(a=answer)=>Response.json({choices:[{message:{content:JSON.stringify(a)}}]});
 test('guide verifies token and replays history before any model call',async()=>{let calls=0;const options={secret,store:localStore(),fetcher:async()=>{calls++;return response();}};const input=await data();await assert.rejects(runGuide({...input,source_id:'jobless'},options),{code:'INVALID_PATH'});await assert.rejects(runGuide({...input,token:input.token+'x'},options),{code:'SESSION_EXPIRED'});assert.equal(calls,0);assert.equal(await verifySession(await issueSession(secret,0),secret),null);});

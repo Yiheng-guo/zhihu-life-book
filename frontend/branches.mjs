@@ -24,8 +24,8 @@ export const SOURCE_LENSES={
 export const SHORT_SOURCES={major_transfer:'建议先查本校转专业条件、期限与准备要求。',major_first:'作者自述凭大一成绩申请转专业获通过。',college_planning:'建议分阶段探索与实践，再权衡就业或深造。',intern_review:'作者自述比较岗位日常，逐渐找到兴趣方向。',graduate_work:'作者自述考研失利、错过实习与高强度工作。',graduate_three:'作者自述多次考研失利后进入跨专业岗位。',jobless:'作者自述边代课边备考，仍在寻找正式工作。'};
 export function branchFor(s){
  const p=s.history.at(-1)?.choiceId;
- if(s.index===0)return {id:'opening',title:'第十八页还没写完',narration:'周禾把录取通知书压在键盘旁。妈妈发来语音：普通一本没关系，考研翻盘。林知夏紧接着问：今晚要不要一起做个小项目？同一个晚上，两条路同时找上门。',options:[OPTIONS.study_plan,OPTIONS.project,OPTIONS.rules]};
+ if(s.index===0)return {id:'opening',title:'第十八页还没写完',narration:'周野把录取通知书压在键盘旁。妈妈发来语音：普通一本没关系，考研翻盘。林知夏紧接着问：今晚要不要一起做个小项目？同一个晚上，两条路同时找上门。',options:[OPTIONS.study_plan,OPTIONS.project,OPTIONS.rules]};
  if(s.index===1){let event=p==='study_plan'?'模考分数比预期低，妈妈说再坚持一下。':p==='project'?'项目演示失败，林知夏问要不要把失败发出去请别人看？':'你发现转专业窗口已过，旁听和补基础仍然来得及。';return {id:'first_failure',title:'第一次失败以后',narration:event,options:[OPTIONS.ask_source,OPTIONS.carry_alone,OPTIONS.talk_roommate]};}
- if(s.index===2)return {id:'deadline',title:'截止日只剩今晚',narration:'一个实习机会今晚截止，妈妈还在说考研才是翻盘，林知夏却已经拿到 offer。周禾必须决定：把时间押在哪里，又要对谁说实话？',options:[OPTIONS.intern,OPTIONS.exam_full,OPTIONS.balance]};
- return {id:'letter',title:'四年后，回信写给谁？',narration:'四年后，周禾重新打开那个文件夹。录取通知书、没发出去的消息、项目文件和几篇知乎回答都在。大一新生问：我是不是已经被定型？周禾要用自己走过的这一页回答。',options:[OPTIONS.reply]};
+ if(s.index===2)return {id:'deadline',title:'截止日只剩今晚',narration:'一个实习机会今晚截止，妈妈还在说考研才是翻盘，林知夏却已经拿到 offer。周野必须决定：把时间押在哪里，又要对谁说实话？',options:[OPTIONS.intern,OPTIONS.exam_full,OPTIONS.balance]};
+ return {id:'letter',title:'四年后，回信写给谁？',narration:'四年后，周野重新打开那个文件夹。录取通知书、没发出去的消息、项目文件和几篇知乎回答都在。大一新生问：我是不是已经被定型？周野要用自己走过的这一页回答。',options:[OPTIONS.reply]};
 }
