@@ -1,96 +1,25 @@
-import { content } from './content.mjs';
-import { branchFor, SOURCE_LENSES, SHORT_SOURCES } from './branches.mjs';
+import {content} from './content.mjs';
+import {branchFor,SOURCE_LENSES,SHORT_SOURCES} from './branches.mjs';
 import {sourceAt,lensAt,questionAt,shortAt} from './source-utils.mjs';
-export const VERSION = '2.1';
-export const STAGES = ['freshman_start','explore','junior','graduation'];
-export const SOURCES = content.refs;
-export const QUESTIONS = content.sourceQuestion;
-// Each choice exposes a possible gain and cost. These are editorial possibilities, never guarantees.
-export const TRADEOFFS = {
-  ask:{gain:'看清校内规则与可选机会',cost:'甄别建议，投入请教时间'}, try:{gain:'获得一次真实的兴趣反馈',cost:'挤出时间，接受尝试落空'},
-  course:{gain:'看见专业与想象的差别',cost:'占用课余，仍需亲自实践'}, practice:{gain:'留下作品与能力反馈',cost:'投入两周，也可能半途受阻'},
-  prepare:{gain:'积累知识，形成复习节奏',cost:'压缩探索时间，承受结果不定'}, intern:{gain:'看清岗位日常与能力要求',cost:'花时间联系，也可能碰壁'},
-  admitted:{gain:'更深的学习与研究机会',cost:'学业投入与延后就业'}, exam:{gain:'系统学习与争取深造的机会',cost:'备考时间、费用与结果不定'},
-  civil:{gain:'接近公共服务工作的机会',cost:'备考投入与岗位地域限制'}, work:{gain:'收入、经验与真实反馈',cost:'时间约束与职场适应压力'},
-  gap:{gain:'恢复节奏，尝试不同方向',cost:'生活开支与履历空档'}, lost:{gain:'从小尝试中逐步厘清方向',cost:'持续不确定带来的心理压力'},
-  jobless:{gain:'借求职反馈调整方向',cost:'收入空档与反复受挫'}, delay:{gain:'补足学业，争取完成这一章',cost:'额外时间、费用与同伴落差'}
-};
-export const ACTIONS = {
-  major_transfer: '用 20 分钟找出本校最新转专业通知，记下条件、截止日和一个咨询渠道。',
-  major_first: '找一门感兴趣的公开课，试做一次练习，记录自己是否愿意继续。',
-  college_planning: '在日历里留出两周后的一次回顾，先为一个兴趣安排 30 分钟实践。',
-  intern_review: '挑两个感兴趣的岗位，分别记下一项日常任务和一个需要向从业者核实的问题。',
-  graduate_work: '把准备考试之外能留给职业探索的时间写下来，安排一次了解岗位日常的交流。',
-  graduate_three: '写下现在最需要解决的一件事：收入、经验、作息或方向，再找一个能接触到的机会。',
-  jobless: '写下未来一个月的必要支出与可投入时间，为学习或求职安排一个能持续的小步。'
-};
-export class StoryError extends Error { constructor(code,message){super(message);this.code=code;} }
-const fail=(code,message)=>{throw new StoryError(code,message)};
-export function createState(){return {version:VERSION,revision:0,index:0,phase:'story',choiceId:null,sourceId:null,history:[],sourceCatalog:{},sourceBatch:null,effort:2};}
-const reference=(s,id)=>({id,...sourceAt(s,id),lens:lensAt(s,id),short_summary:shortAt(s,id),question:questionAt(s,id),action:sourceAt(s,id)?.action||ACTIONS[id]});
-export function attachSources(original,references,snapshot_id){if(original.phase!=='sources'||!Array.isArray(references)||!references.length||references.length>10)fail('INVALID_SOURCE','来源列表无效');const s=structuredClone(original);for(const r of references){if(!r.id||!r.url||!r.summary||!r.lens)fail('INVALID_SOURCE','来源资料不完整');s.sourceCatalog[r.id]=r;}s.sourceBatch={choiceId:s.choiceId,snapshot_id,ids:references.map(r=>r.id)};s.sourceId=null;s.revision++;return s;}
-const ENDING_REFS={
- admitted:['college_planning','major_first','graduate_three'],exam:['graduate_work','graduate_three','jobless'],
- civil:['jobless','graduate_work','college_planning'],work:['intern_review','graduate_work','graduate_three'],
- gap:['college_planning','graduate_three','jobless'],lost:['graduate_three','jobless','college_planning'],
- jobless:['jobless','graduate_work','graduate_three'],delay:['college_planning','major_first','jobless']
-};
-const ENDING_STEPS={
- admitted:'记下一项想在研究生阶段尝试的课题，并查清一门相关课程。',
- exam:'写下未来两周的复习时间与生活支出，留一个回顾和调整的日期。',
- civil:'查一项感兴趣岗位的最新官方报考条件，再了解它的日常工作。',
- work:'向一位从业者准备一个关于日常任务、工时或成长的问题。',
- gap:'给这段空白写下预算、期限和一次复盘日期，再决定第一项探索。',
- lost:'写出最困扰自己的一个具体问题，找到一位愿意交流的人。',
- jobless:'列出必要支出与可求助的渠道，再安排一次简历修改或岗位了解。',
- delay:'找到本校最新毕业要求，向导师或辅导员问清尚缺事项与安排。'
-};
-function choicesFor(s,b){
- if(s.index!==3)return b.options.map(c=>({...c,hint:c.sourceId?'受上页知乎内容启发':''}));
- const all=content.nodes.graduation.choices;
- return [...b.primary,...all.map(c=>c[0]).filter(id=>!b.primary.includes(id))].map(id=>{
-  const [,label,hint]=all.find(c=>c[0]===id);
-  return {id,label,hint,...TRADEOFFS[id],primary:b.primary.includes(id),situation:true};
- });
-}
-function snapshot(s){
- const branch=branchFor(s),choices=choicesFor(s,branch),selected=choices.find(c=>c.id===s.choiceId);
- const refs=s.sourceBatch?.choiceId===s.choiceId?s.sourceBatch.ids:s.index===3?(ENDING_REFS[s.choiceId]||content.nodeRefs.graduation):(selected?.refs||branch.options[0].refs);
- return {branch,choices,selected,refs};
-}
-export function view(s){
- const id=STAGES[s.index], {branch,choices,selected,refs}=snapshot(s), previous=s.history[s.index-1];
- const sourceNext=s.sourceId&&lensAt(s,s.sourceId);
- const echo=selected?(s.index===3?{title:content.endings[s.choiceId][0],text:content.endings[s.choiceId][1]}:{title:selected.label,text:selected.text}):null;
- return {version:VERSION,revision:s.revision,phase:s.phase,index:s.index,node_id:id,branch_id:branch.id,
-  node:{label:content.nodes[id].label,title:branch.title,narration:branch.narration,choices},
-  choice_id:s.choiceId,source_id:s.sourceId,echo,
-  references:refs.map(id=>reference(s,id)),effort:s.effort,source_snapshot:s.sourceBatch?.snapshot_id||null,
-  source_preview:sourceNext?{label:s.index===3?'带回今天的问题':s.index===2?'带到毕业页的问题':'下一页多一个可选行动',text:s.index>=2?questionAt(s,s.sourceId):sourceNext.label}:null,
-  carry:previous?{source:sourceAt(s,previous.sourceId),question:questionAt(s,previous.sourceId),choice:previous.choiceLabel,action:sourceAt(s,previous.sourceId)?.action||ACTIONS[previous.sourceId]}:null,
-  history:s.history.map(h=>({...h,stage:content.nodes[h.nodeId].label,source:sourceAt(s,h.sourceId),question:questionAt(s,h.sourceId)})),
-  ending:s.phase==='ending'?{title:content.endings[s.choiceId][0],text:content.endings[s.choiceId][1],question:questionAt(s,s.sourceId),action:ENDING_STEPS[s.choiceId],tradeoff:TRADEOFFS[s.choiceId]}:null};
-}
-export function transition(original,event){
- if(!event||event.revision!==original.revision)fail('STALE_STATE','页面状态已变化，请重新加载这一步。');
- const s=structuredClone(original), id=STAGES[s.index];
- if(event.node_id!==id)fail('INVALID_NODE','当前章节与请求不一致。');
- const {branch,choices,selected,refs}=snapshot(s);
- if(event.type==='choose'){
-  if(s.phase!=='story')fail('INVALID_PHASE','请先回到当前选择。');
-  if(!choices.some(c=>c.id===event.choice_id))fail('INVALID_CHOICE','这个选择不属于当前处境。');
-  if(event.effort!==undefined&&(!Number.isInteger(event.effort)||event.effort<1||event.effort>3))fail('INVALID_EFFORT','请分配1至3个课余时段。');s.effort=event.effort??2;s.choiceId=event.choice_id;s.sourceId=null;s.sourceBatch=null;s.phase='sources';
- }else if(event.type==='select'){
-  if(s.phase!=='sources')fail('INVALID_PHASE','现在无法选择来源。');
-  if(!refs.includes(event.source_id))fail('INVALID_SOURCE','请选择这一页提供的来源。');
-  s.sourceId=event.source_id;
- }else if(event.type==='advance'){
-  if(s.phase!=='sources'||!s.sourceId)fail('SOURCE_REQUIRED','请先选择一段经历或建议。');
-  s.history.push({nodeId:id,branchId:branch.id,choiceId:s.choiceId,choiceLabel:selected.label,sourceId:s.sourceId,focus:selected.focus||null,gain:selected.gain,cost:selected.cost,inspiredBy:selected.sourceId||null,effort:s.effort,source_snapshot:s.sourceBatch?.snapshot_id||null});
-  if(s.index===3)s.phase='ending';else{s.index++;s.phase='story';s.choiceId=null;s.sourceId=null;s.sourceBatch=null;}
- }else if(event.type==='back'){
-  if(s.phase!=='sources')fail('INVALID_PHASE','当前不能返回选择。');
-  s.phase='story';s.choiceId=null;s.sourceId=null;s.sourceBatch=null;
- }else fail('INVALID_EVENT','无法识别这次操作。');
- s.revision++;return s;
-}
+export const VERSION='2.2';
+export const STAGES=['freshman_start','explore','junior','graduation'];
+export const SOURCES=content.refs; export const QUESTIONS=content.sourceQuestion;
+export const TRADEOFFS={study_plan:{gain:'获得确定感',cost:'少一晚和林知夏相处，压力提前上升'},project:{gain:'留下真实成果',cost:'项目可能失败，占用复习时间'},rules:{gain:'知道申请窗口与代价',cost:'这一晚没有产出'},ask_source:{gain:'得到可核实的下一步',cost:'别人的经验不能替你决定'},carry_alone:{gain:'暂时保住体面',cost:'压力上升，关系变远'},talk_roommate:{gain:'修复关系',cost:'让出一晚并承认害怕'},intern:{gain:'获得岗位反馈',cost:'少一部分备考时间'},exam_full:{gain:'获得稳定准备节奏',cost:'实践变少，结果仍不保证'},balance:{gain:'保留两条路',cost:'短期两边都不彻底'},reply:{gain:'把经历变成具体问题',cost:'回信不能替别人选择'}};
+const ENDINGS=[
+ {id:'work',title:'先工作，再长出方向',text:'你带着实践和一段没有断掉的关系进入工作。第一份工作不是判决书，而是下一次反馈。',source:'intern_review',action:'找一位从业者问清一个岗位的日常任务。'},
+ {id:'study',title:'如愿读研，但问题换了',text:'你把时间押在更长的准备上，也终于承认录取不能替你写完方向。',source:'graduate_three',action:'记下一项想在研究生阶段验证的课题。'},
+ {id:'rest',title:'先停下来，把生活接住',text:'你没有把暂时停下写成失败。收入、作息和支持先有着落，下一页才有空间打开。',source:'jobless',action:'列出一个月必要支出和可以求助的人。'},
+ {id:'search',title:'毕业后仍在寻找',text:'你还没有答案，但“我很迷茫”已经变成一个可以求助、可以尝试的问题。',source:'graduate_three',action:'写下一个具体困惑，找一个愿意交流的人。'}
+];
+function endingFor(s){const f=s.flags;if(f.practice>=3&&f.support>=1)return ENDINGS[0];if(f.academic>=3&&f.clarity>=1)return ENDINGS[1];if(f.pressure>=3)return ENDINGS[2];return ENDINGS[3];}
+export function createState(){return {version:VERSION,revision:0,index:0,phase:'story',choiceId:null,sourceId:null,history:[],sourceCatalog:{},sourceBatch:null,effort:2,character:{name:'周禾',roommate:'林知夏',mother:'妈妈'},flags:{academic:0,practice:0,clarity:0,support:0,pressure:0,time:3},sourceTrail:[],sceneId:'opening'};}
+const reference=(s,id)=>({id,...sourceAt(s,id),lens:lensAt(s,id),short_summary:shortAt(s,id),question:questionAt(s,id),action:sourceAt(s,id)?.action||lensAt(s,id)?.label||'先做一个能核实的小步。'});
+export function attachSources(original,references,snapshot_id){if(original.phase!=='sources'||!Array.isArray(references)||!references.length||references.length>10)throw new Error('来源列表无效');const s=structuredClone(original);for(const r of references){if(!r.id||!r.url||!r.summary||!r.lens)throw new Error('来源资料不完整');s.sourceCatalog[r.id]=r;}s.sourceBatch={choiceId:s.choiceId,snapshot_id,ids:references.map(r=>r.id)};s.sourceId=null;s.revision++;return s;}
+function snapshot(s){const branch=branchFor(s),choices=branch.options;const selected=choices.find(c=>c.id===s.choiceId);const refs=s.sourceBatch?.choiceId===s.choiceId?s.sourceBatch.ids:(selected?.refs||branch.options[0].refs);return {branch,choices,selected,refs};}
+export function view(s){const id=STAGES[s.index],{branch,choices,selected,refs}=snapshot(s),prev=s.history.at(-1),end=s.phase==='ending'?endingFor(s):null;return {version:VERSION,revision:s.revision,phase:s.phase,index:s.index,node_id:id,branch_id:branch.id,node:{label:['第一幕 · 录取通知书','第二幕 · 第一次失败','第三幕 · 截止日','第四幕 · 回信'][s.index],title:branch.title,narration:branch.narration,choices:choices.map(c=>({...c,...TRADEOFFS[c.id]}))},choice_id:s.choiceId,source_id:s.sourceId,references:refs.map(id=>reference(s,id)),effort:s.effort,source_snapshot:s.sourceBatch?.snapshot_id||null,character:s.character,flags:s.flags,source_trail:s.sourceTrail,echo:selected?{title:selected.label,text:selected.text}:null,carry:prev?{source:sourceAt(s,prev.sourceId),question:questionAt(s,prev.sourceId),choice:prev.choiceLabel,action:prev.immediateResult}:null,history:s.history.map(h=>({...h,stage:['第一幕','第二幕','第三幕','第四幕'][h.index],source:sourceAt(s,h.sourceId),question:questionAt(s,h.sourceId)})),ending:end?{...end,question:'今天，你愿意先做哪一个具体的小步？',tradeoff:TRADEOFFS.reply}:null};}
+const DELTAS={study_plan:{academic:1,pressure:1,support:-1},project:{practice:1,clarity:1},rules:{clarity:1},ask_source:{clarity:1},carry_alone:{pressure:1,support:-1},talk_roommate:{support:1},intern:{practice:2,pressure:1,academic:-1},exam_full:{academic:2,pressure:1},balance:{support:1,pressure:-1},reply:{clarity:1}};
+export function transition(original,event){if(!event||event.revision!==original.revision)throw Object.assign(new Error('页面状态已变化，请重新加载这一步。'),{code:'STALE_STATE'});const s=structuredClone(original),id=STAGES[s.index];if(event.node_id!==id)throw Object.assign(new Error('当前章节与请求不一致。'),{code:'INVALID_NODE'});const {branch,choices,selected,refs}=snapshot(s);
+ if(event.type==='choose'){if(s.phase!=='story')throw Object.assign(new Error('请先回到当前选择。'),{code:'INVALID_PHASE'});if(!choices.some(c=>c.id===event.choice_id))throw Object.assign(new Error('这个选择不属于当前处境。'),{code:'INVALID_CHOICE'});s.effort=event.effort??2;s.choiceId=event.choice_id;s.sourceId=null;s.sourceBatch=null;s.phase='sources';const d=DELTAS[event.choice_id]||{};for(const [k,v]of Object.entries(d))s.flags[k]=Math.max(0,(s.flags[k]||0)+v);}
+ else if(event.type==='select'){if(s.phase!=='sources'||!refs.includes(event.source_id))throw Object.assign(new Error('请选择这一页提供的来源。'),{code:'INVALID_SOURCE'});s.sourceId=event.source_id;}
+ else if(event.type==='advance'){if(s.phase!=='sources'||!s.sourceId)throw Object.assign(new Error('请先选中一条页边声音。'),{code:'SOURCE_REQUIRED'});s.history.push({index:s.index,nodeId:id,branchId:branch.id,choiceId:s.choiceId,choiceLabel:selected.label,sourceId:s.sourceId,sourceRole:selected.sourceRole,immediateResult:selected.text,delayedResult:lensAt(s,s.sourceId)?.text||null,gain:selected.gain,cost:selected.cost,effort:s.effort,source_snapshot:s.sourceBatch?.snapshot_id||null});s.sourceTrail.push(s.sourceId);if(s.index===3)s.phase='ending';else{s.index++;s.sceneId=['opening','first_failure','deadline','letter'][s.index];s.phase='story';s.choiceId=null;s.sourceId=null;s.sourceBatch=null;}}
+ else if(event.type==='back'){if(s.phase!=='sources')throw Object.assign(new Error('当前不能返回选择。'),{code:'INVALID_PHASE'});s.phase='story';s.choiceId=null;s.sourceId=null;s.sourceBatch=null;}else throw Object.assign(new Error('无法识别这次操作。'),{code:'INVALID_EVENT'});s.revision++;return s;}

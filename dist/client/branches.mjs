@@ -1,56 +1,31 @@
-// Editorial situations inspired by source topics, not reconstructions of authors' lives.
-const option=(id,label,gain,cost,text,focus,refs)=>({id,label,gain,cost,text,focus,refs});
+// 2.2 narrative branches: a fixed fictional story with real Zhihu voices at the edges.
+const option=(id,label,gain,cost,text,focus,refs,sourceRole='experience_echo')=>({id,label,gain,cost,text,focus,refs,sourceRole});
 export const OPTIONS={
- ask:option('ask','先去了解别人怎么走过这段路','看清规则和可选机会','花时间请教、甄别建议','你查清了条件与咨询渠道。问题没有消失，但知道了下一步向谁问。','academic',['major_transfer','major_first','college_planning']),
- try:option('try','先做一件今天能完成的小事','获得一次兴趣反馈','挤出时间，接受尝试落空','一节公开课让你遇到吃力，也有一刻忘了时间。你决定记下这份感受。','practice',['college_planning','intern_review','major_first']),
- transfer_prepare:option('transfer_prepare','查清条件，准备转专业申请','保留重新选择专业的机会','准备材料，承担申请未过','你记下了本校当年的条件和截止日。准备申请占用课余，但是否通过还未确定。','academic',['major_transfer','major_first','college_planning']),
- course:option('course','先旁听一门目标专业的课','比较想象与实际课程','占用课余，仍需进一步实践','旁听后，你发现喜欢的内容，也遇到基础上的空缺。学习计划需要更具体。','academic',['major_first','major_transfer','college_planning']),
- practice:option('practice','用两周做一个小项目','留下作品和能力反馈','投入时间，可能返工','两周后项目只完成一半。你找到想继续的任务，也看见需要补的能力。','practice',['intern_review','college_planning','graduate_work']),
- rethink:option('rethink','缩小尝试，先安排好课程','找到可持续的节奏','探索速度可能放慢','你将探索缩到每周一个小时。进展变慢了，但开始能同时照顾课程和生活。','sustainable',['college_planning','graduate_work','jobless']),
- prepare:option('prepare','留出稳定的复习时间','积累知识与复习节奏','减少实践时间，结果未定','复习有了节奏，一次练习却暴露出差距。你需要重新考虑目标和可用时间。','academic',['graduate_work','college_planning','graduate_three']),
- intern:option('intern','先问清实习岗位的日常','了解工作与所需能力','花时间联系，可能碰壁','从业者谈到了重复任务与协作压力。你开始用每天要做的事来理解一个岗位。','practice',['intern_review','graduate_work','college_planning']),
- portfolio_intern:option('portfolio_intern','带着作品，尝试投递实习','获得具体的求职反馈','准备投递，也可能没有回复','你将作品整理成投递材料。有的岗位没有回复，也有反馈指出了能力缺口。','practice',['intern_review','graduate_work','graduate_three']),
- study_gap:option('study_gap','先补作品中暴露的基础','把知识空缺补得更扎实','暂时减少投递时间','你决定先补一门基础课。投递暂缓了，下一次实践需要验证学习有没有用。','academic',['college_planning','intern_review','graduate_work']),
- budget_plan:option('budget_plan','算清时间和支出，再排准备','让计划符合眼前资源','可能需要调整原定目标','你把一个月的支出与可用时间写下。原计划需要缩减，也变得更容易持续。','sustainable',['jobless','graduate_work','college_planning']),
- small_practice:option('small_practice','只安排一次能完成的小实践','获得反馈，再决定投入','一次尝试的信息仍然有限','你给实践限定了一周。它没有决定方向，但帮你分清想继续和暂时放下的部分。','practice',['college_planning','intern_review','graduate_three'])
+ study_plan:option('study_plan','把课余时间排满，先准备考研','获得确定感与一条看似稳妥的路线','少一晚和林知夏做项目，压力提前上升','你把日历填满了。每一格都有用途，但林知夏的消息被你放到了很后面。','academic',['major_first','graduate_work','college_planning'],'inciting_question'),
+ project:option('project','跟林知夏做一周的小项目','留下第一次真实的成果和反馈','项目可能失败，也会占用复习时间','你答应了林知夏。周末被项目切成几段，你第一次发现自己愿意为一个陌生问题熬夜。','practice',['intern_review','major_first','college_planning'],'inciting_question'),
+ rules:option('rules','先查清转专业与课程规则','知道真实的申请窗口和代价','这一晚没有产出，时间也不会回来','你打开教务网，把绩点、名额和截止日期抄进了备忘录。想离开之前，至少知道要付出什么。','clarity',['major_transfer','major_first','college_planning'],'inciting_question'),
+ ask_source:option('ask_source','把失败写成一个具体问题，找一条真实经历','获得一个可核实的下一步','别人的经验只能作参照，不能替你决定','你没有再问“我是不是不行”，而是写下了一个可以请教的问题。','clarity',['major_transfer','major_first','college_planning'],'experience_echo'),
+ carry_alone:option('carry_alone','先独自补到满意，再告诉别人','短期保住体面与控制感','压力上升，林知夏不知道你在想什么','你把失败藏进了待办清单。问题看起来变小了，夜却变得更长。','academic',['graduate_work','college_planning','jobless'],'counterpoint'),
+ talk_roommate:option('talk_roommate','把边界告诉林知夏，一起复盘','修复关系，得到一个同行的人','让出一晚自己的时间，也要承认害怕','你告诉她自己可能想转专业。她没有替你决定，只问：那我们先把问题问清楚？','support',['intern_review','major_first','college_planning'],'experience_echo'),
+ intern:option('intern','签下那份实习，先看看真实岗位','获得工作日常和能力缺口的反馈','少一部分备考时间，压力会上升','你把实习 offer 放在桌上。它不是终点，但终于有一件事不再只存在于想象中。','practice',['intern_review','graduate_work','graduate_three'],'counterpoint'),
+ exam_full:option('exam_full','拒绝实习，把时间押在考研上','获得一段稳定的准备节奏','实践变少，结果仍然没有保证','你回复了拒绝。日历干净了许多，也安静了许多。','academic',['graduate_work','graduate_three','jobless'],'counterpoint'),
+ balance:option('balance','谈一份能持续的折中安排','保住关系，也保留两条路','短期内两边都不够彻底','你和林知夏、妈妈各谈了一次。没有人完全满意，但你终于不用把生活押在一个答案上。','support',['intern_review','graduate_work','college_planning'],'counterpoint'),
+ reply:option('reply','给那个大一新生写一封回信','把四年的经历变成一个具体问题','回信不能替对方选择，也不能抹去自己的代价','你重新看了一遍那个问题：我是不是已经被定型？这一次，你准备先回答他愿意承担什么。','clarity',['graduate_three','jobless','intern_review'],'ending_reference')
 };
-// The selected source offers a distinct, optional next action. It never auto-selects for the reader.
 export const SOURCE_LENSES={
- major_transfer:{label:'先核对本校申请窗口',gain:'弄清可选择的范围',cost:'查资料、核实过期信息',focus:'academic',text:'你把通知里的条件和日期记下来。还不确定能不能申请，但不再只凭印象判断。'},
- major_first:{label:'找目标专业同学问一次',gain:'获得具体的课程体验参照',cost:'安排交流，经验也有局限',focus:'academic',text:'你问到了一门课的具体任务。对方的经验是参照，你仍需要亲自试一试。'},
- college_planning:{label:'试两周，再决定要不要继续',gain:'用小投入换来真实反馈',cost:'安排实践与回顾的时间',focus:'sustainable',text:'你给下一次尝试安排了两周后的回顾。先看反馈，再决定是否投入更多。'},
- intern_review:{label:'把两个岗位的日常放在一起看',gain:'分清喜欢的任务与岗位名称',cost:'花时间查证个人描述',focus:'practice',text:'你比较了两类岗位每天要做的事。相同的职位名称背后，生活也可能很不同。'},
- graduate_work:{label:'备考之外，留一次职业探索',gain:'为下一步多留一个参照',cost:'需要分配有限的准备时间',focus:'sustainable',text:'你给备考之外留了一次了解岗位的时间。两边都需要投入，计划要有所取舍。'},
- graduate_three:{label:'先找一个现实可进入的机会',gain:'恢复实践与生活的联系',cost:'初始岗位未必符合期待',focus:'sustainable',text:'你列出眼下能接触到的一项机会，也问清它的时间成本。是否适合，还需要反馈。'},
- jobless:{label:'先算一个月的支出与可用时间',gain:'找到能持续的准备方式',cost:'可能需要调整备考或求职计划',focus:'sustainable',text:'你先把生活成本和可用时间写在一起。方向还不清楚，但下一步开始有了边界。'}
+ major_transfer:{label:'核对本校现行转专业条件',gain:'知道可选范围',cost:'经验不能替代校规',focus:'clarity',text:'你把学校当前的条件和日期记下来，先把想象变成可以核实的问题。'},
+ major_first:{label:'问一位转过专业的人一个具体问题',gain:'得到真实过程参照',cost:'对方的经历不等于你的结果',focus:'clarity',text:'你问到了一步具体做法，但仍需要结合自己的学校和资源判断。'},
+ college_planning:{label:'安排一次两周后的回看',gain:'用小投入获得反馈',cost:'需要真的留出时间',focus:'clarity',text:'你把尝试写进日历，先看反馈，再决定是否加码。'},
+ intern_review:{label:'问清一个岗位的日常任务',gain:'看到工作而非职位名称',cost:'联系和等待都需要时间',focus:'practice',text:'你把岗位拆成每天要做的事，开始判断自己想不想过这样的生活。'},
+ graduate_work:{label:'给备考之外留一次职业探索',gain:'多一个现实参照',cost:'准备时间会被切开',focus:'academic',text:'你没有立刻改变目标，只给未来留了一条能验证的旁路。'},
+ graduate_three:{label:'记下失败后仍能进入的一扇门',gain:'把结果拆成下一步',cost:'要接受路径暂时改变',focus:'practice',text:'你没有把一次失败解释成全部人生，先找到了一个可以进入的具体机会。'},
+ jobless:{label:'先算清一个月的必要支出',gain:'让生活有可执行边界',cost:'必须面对现实压力',focus:'support',text:'你把收入、住处和可求助的人写在一起，先让下一步站得住。'}
 };
-const finals={
- academic:{title:'准备之外，还有哪些可能？',text:'准备占据了一段时间，结果仍不确定。你想读一读哪一种毕业处境？',primary:['admitted','exam','jobless']},
- practice:{title:'走近工作以后，下一步呢？',text:'你已经看过一些岗位和能力要求。求职有反馈，也有空白，你想继续看哪种可能？',primary:['work','jobless','exam']},
- sustainable:{title:'按自己的节奏，翻到毕业',text:'你开始同时考虑目标和眼前资源。毕业没有统一进度，你想读哪种可能？',primary:['work','lost','gap']}
-};
+export const SHORT_SOURCES={major_transfer:'建议先查本校转专业条件、期限与准备要求。',major_first:'作者自述凭大一成绩申请转专业获通过。',college_planning:'建议分阶段探索与实践，再权衡就业或深造。',intern_review:'作者自述比较岗位日常，逐渐找到兴趣方向。',graduate_work:'作者自述考研失利、错过实习与高强度工作。',graduate_three:'作者自述多次考研失利后进入跨专业岗位。',jobless:'作者自述边代课边备考，仍在寻找正式工作。'};
 export function branchFor(s){
- const previous=s.history[s.index-1];
- if(s.index===0)return {id:'enrollment',title:'大学的第一页',narration:'录取结果已经确定。接下来的时间，你想从哪里开始？',options:[OPTIONS.ask,OPTIONS.try]};
- let b;
- if(s.index===1){b=previous.choiceId==='ask'
-  ?{id:'explore_rules',title:'规则查清后，先走哪一步？',narration:'你找到一些校内机会，但查到信息与适合自己，是两件事。',options:[OPTIONS.transfer_prepare,OPTIONS.course]}
-  :{id:'explore_trial',title:'试过一次，还想继续吗？',narration:'第一次尝试留下了兴趣，也占用了时间。你愿意再投入多少？',options:[OPTIONS.practice,OPTIONS.rethink]};
- }else if(s.index===2){b=previous.effort===3?{id:'junior_intensive',title:'投入很多，也要留出余地',narration:'上一幕的课余时段全部用完。先重排课程与生活，再决定怎么继续。',options:[OPTIONS.rethink,OPTIONS.budget_plan]}:previous.effort===1?{id:'junior_limited',title:'时间有限，怎么继续？',narration:'上一幕你只投入一个课余时段，保留了其他安排。这次先让计划可以持续。',options:[OPTIONS.budget_plan,OPTIONS.small_practice]}:previous.focus==='academic'
-  ?{id:'junior_academic',title:'学习更深，还是先看看工作？',narration:'你沿着课程与专业探索了一段。大三临近，学习和实践开始争用时间。',options:[OPTIONS.prepare,OPTIONS.intern]}
-  :previous.focus==='practice'&&previous.choiceId==='follow_source'
-   ?{id:'junior_workday',title:'岗位看过了，先验证哪一件事？',narration:'你比较过岗位日常，还没有亲手做过。可以先问一次实习，也可以试一个小项目。',options:[OPTIONS.intern,OPTIONS.practice]}
-   :previous.focus==='practice'
-   ?{id:'junior_portfolio',title:'作品有了，缺口也看见了',narration:'小项目留下了成果，也暴露了不足。接下来是先获取外部反馈，还是补基础？',options:[OPTIONS.portfolio_intern,OPTIONS.study_gap]}
-   :{id:'junior_sustainable',title:'先让计划，装得进生活',narration:'你开始重视能持续的尝试。大三的准备，要一起考虑时间、支出和状态。',options:[OPTIONS.budget_plan,OPTIONS.small_practice]};
- }else{const f=finals[previous.focus]||finals.sustainable;return {id:'graduation_'+(previous.focus||'sustainable'),title:f.title,narration:previous.effort===3?'这一段你把课余时间全部投入准备。结果仍不确定，下面是可以探索的毕业处境。':f.text,primary:f.primary};}
- const lens=s.sourceCatalog?.[previous.sourceId]?.lens||SOURCE_LENSES[previous.sourceId];
- if(s.index===1&&previous.effort===3)b={...b,id:b.id+'_intensive',title:'投入很多，怎么接住生活？',narration:'课余时间都给了探索，其他安排被挤到一边。先决定要不要调整节奏。',options:[b.options[0],OPTIONS.rethink]};
- return {...b,narration:s.index===1&&previous.effort===1?'上次你只留了一小段时间尝试。还有未问清、未试完的部分，这次怎么安排？':b.narration,options:[...b.options,{id:'follow_source',...lens,sourceId:previous.sourceId,refs:[previous.sourceId,...b.options[0].refs.filter(id=>id!==previous.sourceId)].slice(0,3)}]};
+ const p=s.history.at(-1)?.choiceId;
+ if(s.index===0)return {id:'opening',title:'第十八页还没写完',narration:'周禾把录取通知书压在键盘旁。妈妈发来语音：普通一本没关系，考研翻盘。林知夏紧接着问：今晚要不要一起做个小项目？同一个晚上，两条路同时找上门。',options:[OPTIONS.study_plan,OPTIONS.project,OPTIONS.rules]};
+ if(s.index===1){let event=p==='study_plan'?'模考分数比预期低，妈妈说再坚持一下。':p==='project'?'项目演示失败，林知夏问要不要把失败发出去请别人看？':'你发现转专业窗口已过，旁听和补基础仍然来得及。';return {id:'first_failure',title:'第一次失败以后',narration:event,options:[OPTIONS.ask_source,OPTIONS.carry_alone,OPTIONS.talk_roommate]};}
+ if(s.index===2)return {id:'deadline',title:'截止日只剩今晚',narration:'一个实习机会今晚截止，妈妈还在说考研才是翻盘，林知夏却已经拿到 offer。周禾必须决定：把时间押在哪里，又要对谁说实话？',options:[OPTIONS.intern,OPTIONS.exam_full,OPTIONS.balance]};
+ return {id:'letter',title:'四年后，回信写给谁？',narration:'四年后，周禾重新打开那个文件夹。录取通知书、没发出去的消息、项目文件和几篇知乎回答都在。大一新生问：我是不是已经被定型？周禾要用自己走过的这一页回答。',options:[OPTIONS.reply]};
 }
-export const SHORT_SOURCES={
- major_transfer:'建议先查本校转专业条件、期限与准备要求。',major_first:'作者自述凭大一成绩申请转专业获通过。',
- college_planning:'建议分阶段探索与实践，再权衡就业或深造。',intern_review:'作者自述比较岗位日常，逐渐找到兴趣方向。',
- graduate_work:'作者自述考研失利、错过实习与高强度工作。',graduate_three:'作者自述多次考研失利后，进入跨专业岗位。',
- jobless:'作者自述边代课边备考，2020 年发文时暂无正式工作。'
-};
