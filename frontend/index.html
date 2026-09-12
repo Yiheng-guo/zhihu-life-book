@@ -36,7 +36,7 @@
         <div class="chapter"><span></span>这一页的回声</div>
         <h2 id="resultTitle" class="title" style="font-size:clamp(34px,5vw,58px)"></h2>
         <div class="feedback"><article class="panel"><h3>你的下一页</h3><p id="resultNarration"></p></article><aside class="panel"><h3>知乎上的一个人</h3><div id="source" class="source"></div></aside></div>
-        <div class="footer"><span class="progress">真实经历不是答案，是你继续提问的入口</span><button class="btn" id="nextBtn">继续下一页</button></div>
+        <div class="footer"><span class="progress">真实经历不是答案，是你继续提问的入口 · 大学篇还有下一页</span><button class="btn" id="nextBtn">继续下一页</button></div>
       </div>
     </section>
   </main>
@@ -51,7 +51,7 @@
     function renderStory(data){state.sessionId=data.session_id;state.nodeId=data.node_id;$('storyTitle').textContent=data.title;$('storyNarration').textContent=data.narration;$('choices').innerHTML=data.choices.map(c=>`<button class="choice" data-id="${c.id}"><strong>${c.label}</strong><em>${c.hint||''}</em></button>`).join('');$('choices').querySelectorAll('.choice').forEach(b=>b.onclick=()=>choose(b.dataset.id));}
     async function start(){show('story');try{renderStory(API_BASE?await call('/api/story/start',{}):fallbackStart())}catch(e){renderStory(fallbackStart());$('storyError').textContent='当前使用离线体验，连接恢复后会显示实时知乎来源。';$('storyError').classList.remove('hide');}}
     async function choose(id){$('choices').querySelectorAll('button').forEach(b=>b.disabled=true);try{const d=API_BASE?await call('/api/story/choose',{session_id:state.sessionId,node_id:state.nodeId,choice_id:id}):fallbackChoose(id);state.nodeId=d.next_node_id;$('resultTitle').textContent=d.title;$('resultNarration').textContent=d.narration;const s=d.references?.[0];$('source').innerHTML=s?`<a href="${s.url}" target="_blank" rel="noreferrer">${s.title}</a><p>${s.summary}</p>`:'<p>暂无来源，稍后再试。</p>';show('result')}catch(e){$('storyError').textContent='这一次连接没有完成。请稍后重试，故事不会丢失。';$('storyError').classList.remove('hide');$('choices').querySelectorAll('button').forEach(b=>b.disabled=false)}}
-    $('startBtn').onclick=start;$('aboutBtn').onclick=()=>{$('about').classList.toggle('hide')};$('restartBtn').onclick=()=>{state.sessionId=null;show('start')};$('nextBtn').onclick=()=>{renderStory({session_id:state.sessionId,node_id:'sophomore_next',title:'大学篇 · 下一页',narration:'你还没有得到结论，但你已经拥有了一个更具体的问题。下一章，会从这里继续。',choices:[{id:'ask',label:'继续了解别人的经历',hint:'让问题连接到更多真实的人'},{id:'try',label:'把想法变成一次尝试',hint:'给自己一页可以写下行动的空白'}]});show('story')};
+    $('startBtn').onclick=start;$('aboutBtn').onclick=()=>{$('about').classList.toggle('hide')};$('restartBtn').onclick=()=>{state.sessionId=null;show('start')};$('nextBtn').onclick=()=>{renderStory({session_id:state.sessionId,node_id:'sophomore_next',title:'大三：方向还没有定型',narration:'你发现不同选择都有成本：继续深造可能错过实践，尽早工作也可能还没准备好。你不需要今天决定整个人生，只需要决定下一步要向谁请教、要做哪次尝试。',choices:[{id:'ask',label:'先向走过这条路的人请教',hint:'把“我是不是晚了”改成一个具体问题'},{id:'try',label:'给自己安排一次低成本尝试',hint:'用一次小行动换来更具体的答案'}]});show('story')};
   </script>
 </body>
 </html>
