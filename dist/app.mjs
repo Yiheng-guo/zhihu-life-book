@@ -1,3 +1,4 @@
+import { openCover, setupCover } from './cover.mjs';
 import {createState,transition,view,STAGES,VERSION} from './story.mjs';
 const $=id=>document.getElementById(id);
 const config=window.LIFE_BOOK_CONFIG||{mode:'local',apiBase:''};
@@ -14,6 +15,7 @@ function lock(value){busy=value;document.querySelectorAll('#reader button,#reade
 async function start(){if(busy)return;lock(true);clearError();try{
  if(config.mode==='api'){const d=await api('/api/story/start',{});sessionId=d.session_id;current=d.view;}
  else{state=createState();current=view(state);}
+ await openCover();
  render(true);
  }catch(e){showError(e);}finally{lock(false);}}
 async function send(type,fields={}){if(busy||!current)return;lock(true);clearError();try{
@@ -55,3 +57,5 @@ $('saveBtn').onclick=()=>{const action=$('todayAction').value.trim();if(!action)
  const lines=[`人生之书 · 大学篇 ${VERSION}`,current.ending.title,'',current.ending.question,'今天的一步：'+action,'',...current.history.map(h=>`${h.stage}｜${h.choiceLabel}\n参考：${h.source.title}\n${h.source.url}`),'','情境为产品编排；参考内容为知乎作者经历或建议。'];
  const url=URL.createObjectURL(new Blob([lines.join('\n')],{type:'text/plain;charset=utf-8'}));const a=element('a');a.href=url;a.download='人生之书-今天的书签.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),1000);$('saveStatus').textContent='已生成书签文件';
 };
+
+setupCover();

@@ -1,5 +1,5 @@
 import { content } from './content.mjs';
-export const VERSION = '1.1';
+export const VERSION = '1.2';
 export const STAGES = ['freshman_start','explore','junior','graduation'];
 export const SOURCES = content.refs;
 export const QUESTIONS = content.sourceQuestion;
