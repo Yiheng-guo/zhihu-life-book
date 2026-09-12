@@ -34,7 +34,7 @@ function render(focus){const v=current;
  if(v.phase==='story'){
  $('narration').textContent=v.node.narration;$('choicePrompt').textContent=v.index===3?'你想继续读哪一种可能？':'这一刻，你想先怎么做？';
  $('carry').hidden=!v.carry;if(v.carry){$('carryQuestion').textContent=v.carry.question;$('carryAuthor').textContent=`上页选择：${v.carry.choice} · 参考《${v.carry.source.title}》`;}
- $('choices').replaceChildren(...v.node.choices.map((c,i)=>{const b=element('button',undefined,'choice');b.type='button';b.dataset.choice=c.id;const body=element('span');body.append(element('strong',c.label),element('small',c.hint));b.append(element('span',String.fromCharCode(65+i),'choice-number'),body);b.onclick=()=>send('choose',{choice_id:c.id});return b;}));
+ $('choices').replaceChildren(...v.node.choices.map((c,i)=>{const b=element('button',undefined,'choice');b.type='button';b.dataset.choice=c.id;const body=element('span');body.append(element('strong',c.label),element('small',c.hint));const trade=element('span',undefined,'choice-trade');trade.append(element('span',`得到 · ${c.gain}`),element('span',`付出 · ${c.cost}`));body.append(trade);b.append(element('span',String.fromCharCode(65+i),'choice-number'),body);b.onclick=()=>send('choose',{choice_id:c.id});return b;}));
  }else{
  $('echo').textContent=v.echo.text;
  $('sourceCount').textContent=`${v.references.length} 条内容`;

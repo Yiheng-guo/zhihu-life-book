@@ -3,6 +3,16 @@ export const VERSION = '1.2';
 export const STAGES = ['freshman_start','explore','junior','graduation'];
 export const SOURCES = content.refs;
 export const QUESTIONS = content.sourceQuestion;
+// Each choice exposes a possible gain and cost. These are editorial possibilities, never guarantees.
+export const TRADEOFFS = {
+  ask:{gain:'看清校内规则与可选机会',cost:'甄别建议，投入请教时间'}, try:{gain:'获得一次真实的兴趣反馈',cost:'挤出时间，接受尝试落空'},
+  course:{gain:'看见专业与想象的差别',cost:'占用课余，仍需亲自实践'}, practice:{gain:'留下作品与能力反馈',cost:'投入两周，也可能半途受阻'},
+  prepare:{gain:'积累知识，形成复习节奏',cost:'压缩探索时间，承受结果不定'}, intern:{gain:'看清岗位日常与能力要求',cost:'花时间联系，也可能碰壁'},
+  admitted:{gain:'更深的学习与研究机会',cost:'学业投入与延后就业'}, exam:{gain:'系统学习与争取深造的机会',cost:'备考时间、费用与结果不定'},
+  civil:{gain:'接近公共服务工作的机会',cost:'备考投入与岗位地域限制'}, work:{gain:'收入、经验与真实反馈',cost:'时间约束与职场适应压力'},
+  gap:{gain:'恢复节奏，尝试不同方向',cost:'生活开支与履历空档'}, lost:{gain:'从小尝试中逐步厘清方向',cost:'持续不确定带来的心理压力'},
+  jobless:{gain:'借求职反馈调整方向',cost:'收入空档与反复受挫'}, delay:{gain:'补足学业，争取完成这一章',cost:'额外时间、费用与同伴落差'}
+};
 export const ACTIONS = {
   major_transfer: '用 20 分钟找出本校最新转专业通知，记下条件、截止日和一个咨询渠道。',
   major_first: '找一门感兴趣的公开课，试做一次练习，记录自己是否愿意继续。',
@@ -28,12 +38,12 @@ export function view(s){
   const echo=s.choiceId?(s.index===3?content.endings[s.choiceId]:echoes[s.choiceId]):null;
   const previous=s.history.at(-1);
   return {version:VERSION,revision:s.revision,phase:s.phase,index:s.index,node_id:id,
-    node:{...node,choices:node.choices.map(([id,label,hint])=>({id,label,hint}))},
+    node:{...node,choices:node.choices.map(([id,label,hint])=>({id,label,hint,...(TRADEOFFS[id]||{})}))},
     choice_id:s.choiceId,source_id:s.sourceId,echo:echo?{title:echo[0],text:echo[1]}:null,
     references:content.nodeRefs[id].map(id=>({id,...SOURCES[id],question:QUESTIONS[id],action:ACTIONS[id]})),
     carry:previous?{source:SOURCES[previous.sourceId],question:QUESTIONS[previous.sourceId],choice:previous.choiceLabel}:null,
     history:s.history.map(h=>({...h,stage:content.nodes[h.nodeId].label,source:SOURCES[h.sourceId],question:QUESTIONS[h.sourceId]})),
-    ending:s.phase==='ending'?{title:content.endings[s.choiceId][0],text:content.endings[s.choiceId][1],question:QUESTIONS[s.sourceId],action:ACTIONS[s.sourceId]}:null};
+    ending:s.phase==='ending'?{title:content.endings[s.choiceId][0],text:content.endings[s.choiceId][1],question:QUESTIONS[s.sourceId],action:ACTIONS[s.sourceId],tradeoff:TRADEOFFS[s.choiceId]}:null};
 }
 export function transition(original,event){
   if(!event||event.revision!==original.revision)fail('STALE_STATE','页面状态已变化，请重新加载这一步。');
