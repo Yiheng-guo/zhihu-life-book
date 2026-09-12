@@ -1,6 +1,6 @@
 // Curated source summaries; fictional narrative is kept separate.
 export const content = {
-  "story": {"title":"第十八页还没写完","protagonist":"周禾","roommate":"林知夏","mother":"妈妈","premise":"高考分数已经定了，但它还不能替你写完大学。"},
+  "story": {"title":"第十八页还没写完","protagonist":"周野","roommate":"林知夏","mother":"妈妈","premise":"高考分数已经定了，但它还不能替你写完大学。"},
   "refs": {
     "major_transfer": {
       "title": "大学学的不是喜欢的专业怎么办?",
@@ -73,7 +73,7 @@ export const content = {
     "explore": {
       "label": "第二节 · 探索",
       "title": "你到底想离开，还是只是害怕做不好？",
-      "narration": "第一次项目会议结束，周禾一句话也没说。林知夏在楼道里拦住他：你是真的不喜欢，还是只是第一次做不好？手机上，许宁的知乎回答停在那句：转过去以后，才是真正的开始。",
+      "narration": "第一次项目会议结束，周野一句话也没说。林知夏在楼道里拦住他：你是真的不喜欢，还是只是第一次做不好？手机上，许宁的知乎回答停在那句：转过去以后，才是真正的开始。",
       "choices": [
         [
           "course",
@@ -90,7 +90,7 @@ export const content = {
     "junior": {
       "label": "第三节 · 大三准备",
       "title": "截止日只剩今晚",
-      "narration": "大三的日历翻到周五。一个实习机会今晚截止，妈妈还在说考研才是翻盘，林知夏却已经拿到 offer。周禾必须决定：把时间押在哪里，又要对谁说实话？",
+      "narration": "大三的日历翻到周五。一个实习机会今晚截止，妈妈还在说考研才是翻盘，林知夏却已经拿到 offer。周野必须决定：把时间押在哪里，又要对谁说实话？",
       "choices": [
         [
           "prepare",
@@ -107,7 +107,7 @@ export const content = {
     "graduation": {
       "label": "第四节 · 毕业",
       "title": "四年后，回信写给谁？",
-      "narration": "四年后，周禾重新打开那个文件夹。录取通知书、没发出去的消息、项目文件和几篇知乎回答都在。大一新生问：我是不是已经被定型？周禾要用自己走过的这一页回答。",
+      "narration": "四年后，周野重新打开那个文件夹。录取通知书、没发出去的消息、项目文件和几篇知乎回答都在。大一新生问：我是不是已经被定型？周野要用自己走过的这一页回答。",
       "choices": [
         [
           "admitted",
